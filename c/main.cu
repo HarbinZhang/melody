@@ -2,6 +2,7 @@
 #include <math.h>
 #include <ctime>
 #include <chrono>
+#include <string.h>
 
 typedef struct  WAV_HEADER
 {
@@ -30,7 +31,6 @@ int main(int argc, char ** argv) {
     int headerSize = sizeof(wav_hdr), filelength = 0;
 
     const char* filePath;
-    string input;
 
     filePath = argv[1];
 
