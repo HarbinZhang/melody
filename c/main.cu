@@ -4,6 +4,8 @@
 #include <chrono>
 #include <string.h>
 
+#define BUFFER_SIZE 4096
+
 typedef struct  WAV_HEADER
 {
     /* RIFF Chunk Descriptor */
@@ -25,13 +27,17 @@ typedef struct  WAV_HEADER
 } wav_hdr;
 int getFileSize(FILE* inFile);
 
+__global__ void cuda_fft(int8_t *in, int8_t *out){
+    int i = threadIdx.x;
+
+    printf("%d\n", i);
+}
 
 int main(int argc, char ** argv) {
     wav_hdr wavHeader;
     int headerSize = sizeof(wav_hdr), filelength = 0;
 
     const char* filePath;
-
     filePath = argv[1];
 
     FILE* wavFile = fopen(filePath, "r");
@@ -41,21 +47,23 @@ int main(int argc, char ** argv) {
         return 1;
     }
 
+    int8_t data_array[wavHeader.Subchunk2Size];
     //Read the header
     size_t bytesRead = fread(&wavHeader, 1, headerSize, wavFile);
     if (bytesRead > 0)
     {
+
         //Read the data
         uint16_t bytesPerSample = wavHeader.bitsPerSample / 8;      //Number     of bytes per sample
         uint64_t numSamples = wavHeader.ChunkSize / bytesPerSample; //How many samples are in the wav file?
-        static const uint16_t BUFFER_SIZE = 4096;
         int8_t* buffer = new int8_t[BUFFER_SIZE];
 
         int i = 0;
         while ((bytesRead = fread(buffer, sizeof buffer[0], BUFFER_SIZE / (sizeof buffer[0]), wavFile)) > 0)
         {
             /** DO SOMETHING WITH THE WAVE DATA HERE **/
-            i ++;
+            memcpy(&data_array[BUFFER_SIZE*i], &buffer[0], bytesRead);
+            i++;
         }
         delete [] buffer;
         buffer = nullptr;
@@ -64,6 +72,15 @@ int main(int argc, char ** argv) {
 
     }
     fclose(wavFile);
+
+    int8_t *ginit_array;
+    cudaMalloc((void **) &ginit_array, wavHeader.Subchunk2Size);
+    cudaMemcpy(ginit_array, data_array, wavHeader.Subchunk2Size, cudaMemcpyHostToDevice);
+
+    int8_t *gout_array;
+    cudaMalloc((void **) &gout_array, wavHeader.Subchunk2Size/ BUFFER_SIZE);
+    cuda_fft<<<1, ceil(wavHeader.Subchunk2Size/BUFFER_SIZE)>>>(ginit_array, gout_array);
+
 
     return 0;
 }

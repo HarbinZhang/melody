@@ -61,7 +61,7 @@ int main(int argc, char* argv[])
 
     //Read the header
     size_t bytesRead = fread(&wavHeader, 1, headerSize, wavFile);
-    // cout << "Header Read " << bytesRead << " bytes." << endl;
+    cout << "Header Read " << bytesRead << " bytes." << endl;
     if (bytesRead > 0)
     {
         //Read the data

@@ -5,6 +5,9 @@
 
 // using namespace std;
 
+#define BUFFER_SIZE 4096
+
+
 using std::cin;
 using std::cout;
 using std::endl;
@@ -65,21 +68,23 @@ int main(int argc, char* argv[]){
 
     //Read the header
     size_t bytesRead = fread(&wavHeader, 1, headerSize, wavFile);
-    // cout << "Header Read " << bytesRead << " bytes." << endl;
+    int8_t data_array[wavHeader.Subchunk2Size];
+    cout << "Header Read " << wavHeader.Subchunk2Size << " bytes." << endl;
     if (bytesRead > 0)
     {
         //Read the data
         uint16_t bytesPerSample = wavHeader.bitsPerSample / 8;      //Number     of bytes per sample
         uint64_t numSamples = wavHeader.ChunkSize / bytesPerSample; //How many samples are in the wav file?
-        static const uint16_t BUFFER_SIZE = 4096;
+
         int8_t* buffer = new int8_t[BUFFER_SIZE];
 
         int i = 0;
         while ((bytesRead = fread(buffer, sizeof buffer[0], BUFFER_SIZE / (sizeof buffer[0]), wavFile)) > 0)
         {
             /** DO SOMETHING WITH THE WAVE DATA HERE **/
-            cout << "Read " << bytesRead << " bytes." << endl;
-            i ++;
+            // cout << "Read " << bytesRead << " bytes." << endl;
+            memcpy(&data_array[i*BUFFER_SIZE], &buffer[0], bytesRead);
+            i++;
             // cout << "buffer" << buffer[0]<<endl;
         }
         delete [] buffer;
