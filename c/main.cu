@@ -2,7 +2,7 @@
 #include <math.h>
 #include <ctime>
 #include <chrono>
-#include <string.h>
+#include <cufft.h>
 
 #define BUFFER_SIZE 4096
 
@@ -55,7 +55,7 @@ int main(int argc, char ** argv) {
     {
 
         //Read the data
-        uint16_t bytesPerSample = wavHeader.bitsPerSample / 8;      //Number     of bytes per sample
+        // uint16_t bytesPerSample = wavHeader.bitsPerSample / 8;      //Number     of bytes per sample
         // uint64_t numSamples = wavHeader.ChunkSize / bytesPerSample; //How many samples are in the wav file?
         int8_t* buffer = new int8_t[BUFFER_SIZE];
 
