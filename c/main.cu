@@ -35,7 +35,7 @@ __global__ void cuda_fft(int8_t *in, int8_t *out){
 
 int main(int argc, char ** argv) {
     wav_hdr wavHeader;
-    int headerSize = sizeof(wav_hdr), filelength = 0;
+    int headerSize = sizeof(wav_hdr);
 
     const char* filePath;
     filePath = argv[1];
@@ -47,15 +47,16 @@ int main(int argc, char ** argv) {
         return 1;
     }
 
-    int8_t data_array[wavHeader.Subchunk2Size];
+    
     //Read the header
     size_t bytesRead = fread(&wavHeader, 1, headerSize, wavFile);
+    int8_t data_array[wavHeader.Subchunk2Size];
     if (bytesRead > 0)
     {
 
         //Read the data
         uint16_t bytesPerSample = wavHeader.bitsPerSample / 8;      //Number     of bytes per sample
-        uint64_t numSamples = wavHeader.ChunkSize / bytesPerSample; //How many samples are in the wav file?
+        // uint64_t numSamples = wavHeader.ChunkSize / bytesPerSample; //How many samples are in the wav file?
         int8_t* buffer = new int8_t[BUFFER_SIZE];
 
         int i = 0;
@@ -80,7 +81,7 @@ int main(int argc, char ** argv) {
     int8_t *gout_array;
     cudaMalloc((void **) &gout_array, wavHeader.Subchunk2Size/ BUFFER_SIZE);
     cuda_fft<<<1, ceil(wavHeader.Subchunk2Size/BUFFER_SIZE)>>>(ginit_array, gout_array);
-
+    printf("%s\n", "done");
 
     return 0;
 }
