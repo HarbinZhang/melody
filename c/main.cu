@@ -68,7 +68,6 @@ int main(int argc, char ** argv) {
         }
         delete [] buffer;
         buffer = nullptr;
-        filelength = getFileSize(wavFile);
         printf("%d\n", i);
 
     }

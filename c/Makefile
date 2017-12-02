@@ -9,7 +9,7 @@ cuda:
 
 
 fft:
-	nvcc -arch=sm_35 -o fft.out fft.cu -rdc=true -lcudadevrt -std=c++11
+	nvcc -arch=sm_35 -o main.out fft.cu -rdc=true -lcudadevrt -std=c++11
 
 
 main:
