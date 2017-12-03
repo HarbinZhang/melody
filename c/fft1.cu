@@ -1,6 +1,6 @@
 #include <cufft.h>
-#define  NX 256 
-#define  BATCH 10 
+#define NX 256
+#define BATCH 10
 cufftHandle  plan; 
 cufftComplex  *data; 
 cudaMalloc((void**)&data, sizeof(cufftComplex)*NX*BATCH);
