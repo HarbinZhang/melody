@@ -1,4 +1,4 @@
-#include  <cufft.h> 
+#include <cufft.h>
 #define  NX  256 
 #define  BATCH  10 
 cufftHandle  plan; 
