@@ -12,4 +12,5 @@ data = infile.read().split('\n')
 
 
 plt.plot(data)
+plt.xlim(0, 200)
 plt.show()
