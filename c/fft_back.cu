@@ -56,72 +56,72 @@ void runTest(int argc, char** argv)
         printf("%f\n", h_signal[i].x);
     }
 
-    // // Allocate host memory for the filter
-    // Complex* h_filter_kernel = (Complex*)malloc(sizeof(Complex) * FILTER_KERNEL_SIZE);
-    // // Initalize the memory for the filter
-    // for (unsigned int i = 0; i < FILTER_KERNEL_SIZE; ++i) {
-    //     h_filter_kernel[i].x = rand() / (float)RAND_MAX;
-    //     h_filter_kernel[i].y = 0;
-    // }
+    // Allocate host memory for the filter
+    Complex* h_filter_kernel = (Complex*)malloc(sizeof(Complex) * FILTER_KERNEL_SIZE);
+    // Initalize the memory for the filter
+    for (unsigned int i = 0; i < FILTER_KERNEL_SIZE; ++i) {
+        h_filter_kernel[i].x = rand() / (float)RAND_MAX;
+        h_filter_kernel[i].y = 0;
+    }
 
     // Pad signal and filter kernel
-    // Complex* h_padded_signal;
-    // Complex* h_padded_filter_kernel;
-    // int new_size = PadData(h_signal, &h_padded_signal, SIGNAL_SIZE,
-    //                        h_filter_kernel, &h_padded_filter_kernel, FILTER_KERNEL_SIZE);
-    int mem_size = sizeof(Complex) * SIGNAL_SIZE;
+    Complex* h_padded_signal;
+    Complex* h_padded_filter_kernel;
+    int new_size = PadData(h_signal, &h_padded_signal, SIGNAL_SIZE,
+                           h_filter_kernel, &h_padded_filter_kernel, FILTER_KERNEL_SIZE);
+    int mem_size = sizeof(Complex) * new_size;
 
     // Allocate device memory for signal
     Complex* d_signal;
     cudaMalloc((void**)&d_signal, mem_size);
     // Copy host memory to device
-    cudaMemcpy(d_signal, h_signal, mem_size,
+    cudaMemcpy(d_signal, h_padded_signal, mem_size,
                cudaMemcpyHostToDevice);
 
     // Allocate device memory for filter kernel
-    // Complex* d_filter_kernel;
-    // cudaMalloc((void**)&d_filter_kernel, mem_size);
+    Complex* d_filter_kernel;
+    cudaMalloc((void**)&d_filter_kernel, mem_size);
 
     // Copy host memory to device
-    // cudaMemcpy(d_filter_kernel, h_padded_filter_kernel, mem_size,
-    //            cudaMemcpyHostToDevice);
+    cudaMemcpy(d_filter_kernel, h_padded_filter_kernel, mem_size,
+               cudaMemcpyHostToDevice);
 
     // CUFFT plan
     cufftHandle plan;
-    cufftPlan1d(&plan, SIGNAL_SIZE, CUFFT_C2C, 1);
+    cufftPlan1d(&plan, new_size, CUFFT_C2C, 1);
 
     // Transform signal and kernel
     printf("Transforming signal cufftExecC2C\n");
     cufftExecC2C(plan, (cufftComplex *)d_signal, (cufftComplex *)d_signal, CUFFT_FORWARD);
-    // cufftExecC2C(plan, (cufftComplex *)d_filter_kernel, (cufftComplex *)d_filter_kernel, CUFFT_FORWARD);
+    cufftExecC2C(plan, (cufftComplex *)d_filter_kernel, (cufftComplex *)d_filter_kernel, CUFFT_FORWARD);
 
     // for(int i = 0; i < SIGNAL_SIZE; i++){
     //     printf("%f\n", d_signal[i].x);
     // }
 
     // Multiply the coefficients together and normalize the result
-    // printf("Launching ComplexPointwiseMulAndScale<<< >>>\n");
-    // ComplexPointwiseMulAndScale<<<32, 256>>>(d_signal, d_filter_kernel, new_size, 1.0f / new_size);
+    printf("Launching ComplexPointwiseMulAndScale<<< >>>\n");
+    ComplexPointwiseMulAndScale<<<32, 256>>>(d_signal, d_filter_kernel, new_size, 1.0f / new_size);
 
     // Transform signal back
     printf("Transforming signal back cufftExecC2C\n");
     cufftExecC2C(plan, (cufftComplex *)d_signal, (cufftComplex *)d_signal, CUFFT_INVERSE);
 
     // Copy device memory to host
-    Complex* h_convolved_signal = h_signal;
+    Complex* h_convolved_signal = h_padded_signal;
     cudaMemcpy(h_convolved_signal, d_signal, mem_size,
                cudaMemcpyDeviceToHost);
 
     // Allocate host memory for the convolution result
-    // Complex* h_convolved_signal_ref = (Complex*)malloc(sizeof(Complex) * SIGNAL_SIZE);
+    Complex* h_convolved_signal_ref = (Complex*)malloc(sizeof(Complex) * SIGNAL_SIZE);
 
     // Convolve on the host
-    // Convolve(h_signal, SIGNAL_SIZE,
-    //          h_filter_kernel, FILTER_KERNEL_SIZE,
-    //          h_convolved_signal_ref);
+    Convolve(h_signal, SIGNAL_SIZE,
+             h_filter_kernel, FILTER_KERNEL_SIZE,
+             h_convolved_signal_ref);
 
     for(int i = 0; i < SIGNAL_SIZE; i++){
-        printf("%f\n", h_convolved_signal[i].x);
+        printf("%f\n", h_convolved_signal_ref[i].x);
     }
 
     //Destroy CUFFT context
@@ -129,12 +129,12 @@ void runTest(int argc, char** argv)
 
     // cleanup memory
     free(h_signal);
-    // free(h_filter_kernel);
-    // free(h_padded_signal);
-    // free(h_padded_filter_kernel);
-    // free(h_convolved_signal_ref);
+    free(h_filter_kernel);
+    free(h_padded_signal);
+    free(h_padded_filter_kernel);
+    free(h_convolved_signal_ref);
     cudaFree(d_signal);
-    // cudaFree(d_filter_kernel);
+    cudaFree(d_filter_kernel);
 
 }
 
