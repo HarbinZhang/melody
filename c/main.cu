@@ -74,25 +74,53 @@ int main(int argc, char ** argv) {
     }
     fclose(wavFile);
 
-    // int8_t *ginit_array;
-    // cudaMalloc((void **) &ginit_array, wavHeader.Subchunk2Size);
-    // cudaMemcpy(ginit_array, data_array, wavHeader.Subchunk2Size, cudaMemcpyHostToDevice);
-
-    // int8_t *gout_array;
-    // cudaMalloc((void **) &gout_array, wavHeader.Subchunk2Size/ BUFFER_SIZE);
-    // cuda_fft<<<1, ceil(wavHeader.Subchunk2Size/BUFFER_SIZE)>>>(ginit_array, gout_array);
-    // printf("%s\n", "done");
-
     printf("[simpleCUFFT] is starting...\n");
     // Allocate host memory for the signal
     // Complex* h_signal = (Complex*)malloc(sizeof(Complex) * SIGNAL_SIZE);
+    float* h_signal = (float*) malloc(sizeof(float)) * SIGNAL_SIZE;
+    memcpy(h_signal, data_array[0], SIGNAL_SIZE);
+
     // Initalize the memory for the signal
+    int mem_size = sizeof(float) * SIGNAL_SIZE;
 
-    // R 2 C ?
-    // 
+    // Allocate device memory for signal
+    float* g_signal;
+    cudaMalloc((void**)&g_signal, mem_size);
+    // Copy host memory to device
+    cudaMemcpy(g_signal, h_signal, mem_size,
+               cudaMemcpyHostToDevice);
+
+    Complex* g_out;
+    cudaMalloc((void**)&g_out, sizeof(Complex) * SIGNAL_SIZE);
+
+    // CUFFT plan
+    cufftHandle plan;
+    cufftPlan1d(&plan, SIGNAL_SIZE, CUFFT_R2C, 1);
+
+    // Transform signal and kernel
+    printf("Transforming signal cufftExecC2C\n");
+    cufftExecR2C(plan, (float *)g_signal, (Complex *)g_out, CUFFT_FORWARD);    
+
+    
+    // Transform signal back
+    printf("Transforming signal back cufftExecC2C\n");
+    cufftExecC2R(plan, (Complex *)g_out, (float *)g_signal, CUFFT_INVERSE);
 
 
+    float* h_out = h_signal;
+    cudaMemcpy(h_out, g_signal, mem_size, cudaMemcpyDeviceToHost);
 
+
+    for(int i = 0; i < SIGNAL_SIZE; i++){
+        printf("%f\n", h_out[i]);
+    }
+
+    cufftDestroy(plan);
+
+    free(h_signal);
+
+    cudaFree(g_signal);
+    cudaFree(g_out);
 
     return 0;
 }
