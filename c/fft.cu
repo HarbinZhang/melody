@@ -50,7 +50,8 @@ void runTest(int argc, char** argv)
     Complex* h_signal = (Complex*)malloc(sizeof(Complex) * SIGNAL_SIZE);
     // Initalize the memory for the signal
     for (unsigned int i = 0; i < SIGNAL_SIZE; ++i) {
-        h_signal[i].x = rand() / (float)RAND_MAX;
+        // h_signal[i].x = rand() / (float)RAND_MAX;
+        h_signal[i].x = sin(0.4*i);
         h_signal[i].y = 0;
         printf("%f\n", h_signal[i].x);
     }

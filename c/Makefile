@@ -5,11 +5,11 @@ git:
 
 
 cuda:
-	nvcc -arch=sm_35 -o main.out main.cu -rdc=true -lcudadevrt -std=c++11
+	nvcc -arch=sm_35 -o main.out main.cu -rdc=true -lcudadevrt -std=c++11 -lcufft
 
 
 fft:
-	nvcc -arch=sm_35 -o main.out fft.cu -rdc=true -lcudadevrt -std=c++11
+	nvcc -arch=sm_35 -o main.out fft1.cu -rdc=true -lcudadevrt -std=c++11 -lcufft
 
 
 main:
