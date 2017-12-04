@@ -6,6 +6,11 @@
 
 #define BUFFER_SIZE 4096
 
+// Complex data type
+typedef float2 Complex;
+
+#define SIGNAL_SIZE 1000
+
 typedef struct  WAV_HEADER
 {
     /* RIFF Chunk Descriptor */
@@ -27,11 +32,7 @@ typedef struct  WAV_HEADER
 } wav_hdr;
 int getFileSize(FILE* inFile);
 
-__global__ void cuda_fft(int8_t *in, int8_t *out){
-    int i = threadIdx.x;
 
-    printf("%d\n", i);
-}
 
 int main(int argc, char ** argv) {
     wav_hdr wavHeader;
@@ -50,14 +51,14 @@ int main(int argc, char ** argv) {
     
     //Read the header
     size_t bytesRead = fread(&wavHeader, 1, headerSize, wavFile);
-    int8_t data_array[wavHeader.Subchunk2Size];
+    float data_array[wavHeader.Subchunk2Size];
     if (bytesRead > 0)
     {
 
         //Read the data
         // uint16_t bytesPerSample = wavHeader.bitsPerSample / 8;      //Number     of bytes per sample
         // uint64_t numSamples = wavHeader.ChunkSize / bytesPerSample; //How many samples are in the wav file?
-        int8_t* buffer = new int8_t[BUFFER_SIZE];
+        float* buffer = new float[BUFFER_SIZE];
 
         int i = 0;
         while ((bytesRead = fread(buffer, sizeof buffer[0], BUFFER_SIZE / (sizeof buffer[0]), wavFile)) > 0)
@@ -73,14 +74,25 @@ int main(int argc, char ** argv) {
     }
     fclose(wavFile);
 
-    int8_t *ginit_array;
-    cudaMalloc((void **) &ginit_array, wavHeader.Subchunk2Size);
-    cudaMemcpy(ginit_array, data_array, wavHeader.Subchunk2Size, cudaMemcpyHostToDevice);
+    // int8_t *ginit_array;
+    // cudaMalloc((void **) &ginit_array, wavHeader.Subchunk2Size);
+    // cudaMemcpy(ginit_array, data_array, wavHeader.Subchunk2Size, cudaMemcpyHostToDevice);
 
-    int8_t *gout_array;
-    cudaMalloc((void **) &gout_array, wavHeader.Subchunk2Size/ BUFFER_SIZE);
-    cuda_fft<<<1, ceil(wavHeader.Subchunk2Size/BUFFER_SIZE)>>>(ginit_array, gout_array);
-    printf("%s\n", "done");
+    // int8_t *gout_array;
+    // cudaMalloc((void **) &gout_array, wavHeader.Subchunk2Size/ BUFFER_SIZE);
+    // cuda_fft<<<1, ceil(wavHeader.Subchunk2Size/BUFFER_SIZE)>>>(ginit_array, gout_array);
+    // printf("%s\n", "done");
+
+    printf("[simpleCUFFT] is starting...\n");
+    // Allocate host memory for the signal
+    // Complex* h_signal = (Complex*)malloc(sizeof(Complex) * SIGNAL_SIZE);
+    // Initalize the memory for the signal
+
+    // R 2 C ?
+    // 
+
+
+
 
     return 0;
 }
