@@ -28,8 +28,8 @@ int PadData(const Complex*, Complex**, int,
 void runTest(int argc, char** argv);
 
 // The filter size is assumed to be a number smaller than the signal size
-#define SIGNAL_SIZE        100
-#define FILTER_KERNEL_SIZE 11
+#define SIGNAL_SIZE        1000
+// #define FILTER_KERNEL_SIZE 11
 
 ////////////////////////////////////////////////////////////////////////////////
 // Program main
@@ -51,7 +51,7 @@ void runTest(int argc, char** argv)
     // Initalize the memory for the signal
     for (unsigned int i = 0; i < SIGNAL_SIZE; ++i) {
         // h_signal[i].x = rand() / (float)RAND_MAX;
-        h_signal[i].x = sin(0.04*i);
+        h_signal[i].x = sin(0.001*(float)i);
         h_signal[i].y = 0;
         printf("%f\n", h_signal[i].x);
     }
