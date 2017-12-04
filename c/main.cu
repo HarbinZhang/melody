@@ -9,7 +9,7 @@
 // Complex data type
 typedef float2 Complex;
 
-#define SIGNAL_SIZE 1000
+#define SIGNAL_SIZE 100
 
 typedef struct  WAV_HEADER
 {
@@ -79,6 +79,10 @@ int main(int argc, char ** argv) {
     // Complex* h_signal = (Complex*)malloc(sizeof(Complex) * SIGNAL_SIZE);
     float* h_signal = (float*) malloc(sizeof(float) * SIGNAL_SIZE);
     memcpy(h_signal, &data_array[0], SIGNAL_SIZE);
+
+    for(int i = 0; i < SIGNAL_SIZE; i++){
+        printf("%f\n", h_signal[i]);
+    }
 
     // Initalize the memory for the signal
     int mem_size = sizeof(float) * SIGNAL_SIZE;
