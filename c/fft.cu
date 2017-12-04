@@ -11,17 +11,17 @@
 
 // Complex data type
 typedef float2 Complex;
-static __device__ __host__ inline Complex ComplexAdd(Complex, Complex);
-static __device__ __host__ inline Complex ComplexScale(Complex, float);
-static __device__ __host__ inline Complex ComplexMul(Complex, Complex);
-static __global__ void ComplexPointwiseMulAndScale(Complex*, const Complex*, int, float);
+// static __device__ __host__ inline Complex ComplexAdd(Complex, Complex);
+// static __device__ __host__ inline Complex ComplexScale(Complex, float);
+// static __device__ __host__ inline Complex ComplexMul(Complex, Complex);
+// static __global__ void ComplexPointwiseMulAndScale(Complex*, const Complex*, int, float);
 
 // Filtering functions
-void Convolve(const Complex*, int, const Complex*, int, Complex*);
+// void Convolve(const Complex*, int, const Complex*, int, Complex*);
 
 // Padding functions
-int PadData(const Complex*, Complex**, int,
-            const Complex*, Complex**, int);
+// int PadData(const Complex*, Complex**, int,
+//             const Complex*, Complex**, int);
 
 ////////////////////////////////////////////////////////////////////////////////
 // declaration, forward
@@ -138,89 +138,89 @@ void runTest(int argc, char** argv)
 
 }
 
-// Pad data
-int PadData(const Complex* signal, Complex** padded_signal, int signal_size,
-            const Complex* filter_kernel, Complex** padded_filter_kernel, int filter_kernel_size)
-{
-    int minRadius = filter_kernel_size / 2;
-    int maxRadius = filter_kernel_size - minRadius;
-    int new_size = signal_size + maxRadius;
+// // Pad data
+// int PadData(const Complex* signal, Complex** padded_signal, int signal_size,
+//             const Complex* filter_kernel, Complex** padded_filter_kernel, int filter_kernel_size)
+// {
+//     int minRadius = filter_kernel_size / 2;
+//     int maxRadius = filter_kernel_size - minRadius;
+//     int new_size = signal_size + maxRadius;
 
-    // Pad signal
-    Complex* new_data = (Complex*)malloc(sizeof(Complex) * new_size);
-    memcpy(new_data +           0, signal,              signal_size * sizeof(Complex));
-    memset(new_data + signal_size,      0, (new_size - signal_size) * sizeof(Complex));
-    *padded_signal = new_data;
+//     // Pad signal
+//     Complex* new_data = (Complex*)malloc(sizeof(Complex) * new_size);
+//     memcpy(new_data +           0, signal,              signal_size * sizeof(Complex));
+//     memset(new_data + signal_size,      0, (new_size - signal_size) * sizeof(Complex));
+//     *padded_signal = new_data;
 
-    // Pad filter
-    new_data = (Complex*)malloc(sizeof(Complex) * new_size);
-    memcpy(new_data +                    0, filter_kernel + minRadius,                       maxRadius * sizeof(Complex));
-    memset(new_data +            maxRadius,                         0, (new_size - filter_kernel_size) * sizeof(Complex));
-    memcpy(new_data + new_size - minRadius,             filter_kernel,                       minRadius * sizeof(Complex));
-    *padded_filter_kernel = new_data;
+//     // Pad filter
+//     new_data = (Complex*)malloc(sizeof(Complex) * new_size);
+//     memcpy(new_data +                    0, filter_kernel + minRadius,                       maxRadius * sizeof(Complex));
+//     memset(new_data +            maxRadius,                         0, (new_size - filter_kernel_size) * sizeof(Complex));
+//     memcpy(new_data + new_size - minRadius,             filter_kernel,                       minRadius * sizeof(Complex));
+//     *padded_filter_kernel = new_data;
 
-    return new_size;
-}
+//     return new_size;
+// }
 
-////////////////////////////////////////////////////////////////////////////////
-// Filtering operations
-////////////////////////////////////////////////////////////////////////////////
+// ////////////////////////////////////////////////////////////////////////////////
+// // Filtering operations
+// ////////////////////////////////////////////////////////////////////////////////
 
-// Computes convolution on the host
-void Convolve(const Complex* signal, int signal_size,
-              const Complex* filter_kernel, int filter_kernel_size,
-              Complex* filtered_signal)
-{
-    int minRadius = filter_kernel_size / 2;
-    int maxRadius = filter_kernel_size - minRadius;
-    // Loop over output element indices
-    for (int i = 0; i < signal_size; ++i) {
-        filtered_signal[i].x = filtered_signal[i].y = 0;
-        // Loop over convolution indices
-        for (int j = - maxRadius + 1; j <= minRadius; ++j) {
-            int k = i + j;
-            if (k >= 0 && k < signal_size)
-                filtered_signal[i] = ComplexAdd(filtered_signal[i], ComplexMul(signal[k], filter_kernel[minRadius - j]));
-        }
-    }
-}
+// // Computes convolution on the host
+// void Convolve(const Complex* signal, int signal_size,
+//               const Complex* filter_kernel, int filter_kernel_size,
+//               Complex* filtered_signal)
+// {
+//     int minRadius = filter_kernel_size / 2;
+//     int maxRadius = filter_kernel_size - minRadius;
+//     // Loop over output element indices
+//     for (int i = 0; i < signal_size; ++i) {
+//         filtered_signal[i].x = filtered_signal[i].y = 0;
+//         // Loop over convolution indices
+//         for (int j = - maxRadius + 1; j <= minRadius; ++j) {
+//             int k = i + j;
+//             if (k >= 0 && k < signal_size)
+//                 filtered_signal[i] = ComplexAdd(filtered_signal[i], ComplexMul(signal[k], filter_kernel[minRadius - j]));
+//         }
+//     }
+// }
 
-////////////////////////////////////////////////////////////////////////////////
-// Complex operations
-////////////////////////////////////////////////////////////////////////////////
+// ////////////////////////////////////////////////////////////////////////////////
+// // Complex operations
+// ////////////////////////////////////////////////////////////////////////////////
 
-// Complex addition
-static __device__ __host__ inline Complex ComplexAdd(Complex a, Complex b)
-{
-    Complex c;
-    c.x = a.x + b.x;
-    c.y = a.y + b.y;
-    return c;
-}
+// // Complex addition
+// static __device__ __host__ inline Complex ComplexAdd(Complex a, Complex b)
+// {
+//     Complex c;
+//     c.x = a.x + b.x;
+//     c.y = a.y + b.y;
+//     return c;
+// }
 
-// Complex scale
-static __device__ __host__ inline Complex ComplexScale(Complex a, float s)
-{
-    Complex c;
-    c.x = s * a.x;
-    c.y = s * a.y;
-    return c;
-}
+// // Complex scale
+// static __device__ __host__ inline Complex ComplexScale(Complex a, float s)
+// {
+//     Complex c;
+//     c.x = s * a.x;
+//     c.y = s * a.y;
+//     return c;
+// }
 
-// Complex multiplication
-static __device__ __host__ inline Complex ComplexMul(Complex a, Complex b)
-{
-    Complex c;
-    c.x = a.x * b.x - a.y * b.y;
-    c.y = a.x * b.y + a.y * b.x;
-    return c;
-}
+// // Complex multiplication
+// static __device__ __host__ inline Complex ComplexMul(Complex a, Complex b)
+// {
+//     Complex c;
+//     c.x = a.x * b.x - a.y * b.y;
+//     c.y = a.x * b.y + a.y * b.x;
+//     return c;
+// }
 
-// Complex pointwise multiplication
-static __global__ void ComplexPointwiseMulAndScale(Complex* a, const Complex* b, int size, float scale)
-{
-    const int numThreads = blockDim.x * gridDim.x;
-    const int threadID = blockIdx.x * blockDim.x + threadIdx.x;
-    for (int i = threadID; i < size; i += numThreads)
-        a[i] = ComplexScale(ComplexMul(a[i], b[i]), scale);
-}
+// // Complex pointwise multiplication
+// static __global__ void ComplexPointwiseMulAndScale(Complex* a, const Complex* b, int size, float scale)
+// {
+//     const int numThreads = blockDim.x * gridDim.x;
+//     const int threadID = blockIdx.x * blockDim.x + threadIdx.x;
+//     for (int i = threadID; i < size; i += numThreads)
+//         a[i] = ComplexScale(ComplexMul(a[i], b[i]), scale);
+// }
