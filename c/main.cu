@@ -77,7 +77,7 @@ int main(int argc, char ** argv) {
     printf("[simpleCUFFT] is starting...\n");
     // Allocate host memory for the signal
     // Complex* h_signal = (Complex*)malloc(sizeof(Complex) * SIGNAL_SIZE);
-    float* h_signal = (float*) malloc(sizeof(float)) * SIGNAL_SIZE;
+    float* h_signal = (float*) malloc(sizeof(float) * SIGNAL_SIZE);
     memcpy(h_signal, data_array[0], SIGNAL_SIZE);
 
     // Initalize the memory for the signal
@@ -99,12 +99,12 @@ int main(int argc, char ** argv) {
 
     // Transform signal and kernel
     printf("Transforming signal cufftExecC2C\n");
-    cufftExecR2C(plan, (float *)g_signal, (Complex *)g_out, CUFFT_FORWARD);    
+    cufftExecR2C(plan, (float *)g_signal, (Complex *)g_out);    
 
     
     // Transform signal back
     printf("Transforming signal back cufftExecC2C\n");
-    cufftExecC2R(plan, (Complex *)g_out, (float *)g_signal, CUFFT_INVERSE);
+    cufftExecC2R(plan, (Complex *)g_out, (float *)g_signal);
 
 
     float* h_out = h_signal;
