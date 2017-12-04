@@ -78,7 +78,7 @@ int main(int argc, char ** argv) {
     // Allocate host memory for the signal
     // Complex* h_signal = (Complex*)malloc(sizeof(Complex) * SIGNAL_SIZE);
     float* h_signal = (float*) malloc(sizeof(float) * SIGNAL_SIZE);
-    memcpy(h_signal, data_array[0], SIGNAL_SIZE);
+    memcpy(h_signal, &data_array[0], SIGNAL_SIZE);
 
     // Initalize the memory for the signal
     int mem_size = sizeof(float) * SIGNAL_SIZE;
