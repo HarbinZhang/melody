@@ -52,6 +52,7 @@ void runTest(int argc, char** argv)
     for (unsigned int i = 0; i < SIGNAL_SIZE; ++i) {
         h_signal[i].x = rand() / (float)RAND_MAX;
         h_signal[i].y = 0;
+        printf("%f\n", h_signal[i].x);
     }
 
     // Allocate host memory for the filter
@@ -113,6 +114,10 @@ void runTest(int argc, char** argv)
     Convolve(h_signal, SIGNAL_SIZE,
              h_filter_kernel, FILTER_KERNEL_SIZE,
              h_convolved_signal_ref);
+
+    for(int i = 0; i < SIGNAL_SIZE; i++){
+        printf("%f\n", h_convolved_signal_ref[i].x);
+    }
 
     //Destroy CUFFT context
     cufftDestroy(plan);
