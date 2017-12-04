@@ -28,7 +28,7 @@ int PadData(const Complex*, Complex**, int,
 void runTest(int argc, char** argv);
 
 // The filter size is assumed to be a number smaller than the signal size
-#define SIGNAL_SIZE        50
+#define SIGNAL_SIZE        100
 #define FILTER_KERNEL_SIZE 11
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -51,7 +51,7 @@ void runTest(int argc, char** argv)
     // Initalize the memory for the signal
     for (unsigned int i = 0; i < SIGNAL_SIZE; ++i) {
         // h_signal[i].x = rand() / (float)RAND_MAX;
-        h_signal[i].x = sin(0.1*i);
+        h_signal[i].x = sin(0.04*i);
         h_signal[i].y = 0;
         printf("%f\n", h_signal[i].x);
     }
@@ -95,9 +95,9 @@ void runTest(int argc, char** argv)
     cufftExecC2C(plan, (cufftComplex *)d_signal, (cufftComplex *)d_signal, CUFFT_FORWARD);
     cufftExecC2C(plan, (cufftComplex *)d_filter_kernel, (cufftComplex *)d_filter_kernel, CUFFT_FORWARD);
 
-    for(int i = 0; i < SIGNAL_SIZE; i++){
-        printf("%f\n", d_signal[i].x);
-    }
+    // for(int i = 0; i < SIGNAL_SIZE; i++){
+    //     printf("%f\n", d_signal[i].x);
+    // }
 
     // Multiply the coefficients together and normalize the result
     printf("Launching ComplexPointwiseMulAndScale<<< >>>\n");
