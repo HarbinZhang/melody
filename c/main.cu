@@ -51,7 +51,7 @@ int main(int argc, char ** argv) {
     
     //Read the header
     size_t bytesRead = fread(&wavHeader, 1, headerSize, wavFile);
-    float data_array[wavHeader.Subchunk2Size];
+    short data_array[wavHeader.Subchunk2Size/2];
     if (bytesRead > 0)
     {
 
@@ -64,7 +64,7 @@ int main(int argc, char ** argv) {
         while ((bytesRead = fread(buffer, sizeof buffer[0], BUFFER_SIZE / (sizeof buffer[0]), wavFile)) > 0)
         {
             /** DO SOMETHING WITH THE WAVE DATA HERE **/
-            memcpy(&data_array[BUFFER_SIZE*i], &buffer[0], bytesRead);
+            memcpy(&data_array[BUFFER_SIZE*i/2], &buffer[0], bytesRead);
             i++;
         }
         delete [] buffer;
@@ -80,7 +80,11 @@ int main(int argc, char ** argv) {
     // Allocate host memory for the signal
     // Complex* h_signal = (Complex*)malloc(sizeof(Complex) * SIGNAL_SIZE);
     float* h_signal = (float*) malloc(sizeof(float) * SIGNAL_SIZE);
-    memcpy(h_signal, &data_array[0], SIGNAL_SIZE);
+
+    // memcpy(h_signal, &data_array[0], SIGNAL_SIZE);
+    for(int i = 0; i < wavHeader.Subchunk2Size/2; i++){
+        h_signal[i] = (float) data_array[i];
+    }
 
     for(int i = 0; i < SIGNAL_SIZE; i++){
         printf("%f\n", h_signal[i]);

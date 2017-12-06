@@ -68,7 +68,7 @@ int main(int argc, char* argv[]){
 
     //Read the header
     size_t bytesRead = fread(&wavHeader, 1, headerSize, wavFile);
-    int8_t data_array[wavHeader.Subchunk2Size];
+    short data_array[wavHeader.Subchunk2Size/2];
     cout << "Header Read " << wavHeader.Subchunk2Size << " bytes." << endl;
     if (bytesRead > 0)
     {
@@ -83,7 +83,7 @@ int main(int argc, char* argv[]){
         {
             /** DO SOMETHING WITH THE WAVE DATA HERE **/
             // cout << "Read " << bytesRead << " bytes." << endl;
-            memcpy(&data_array[i*BUFFER_SIZE], &buffer[0], bytesRead);
+            memcpy(&data_array[i*BUFFER_SIZE/2], &buffer[0], bytesRead);
             i++;
             // cout << "buffer" << buffer[0]<<endl;
         }
@@ -111,6 +111,10 @@ int main(int argc, char* argv[]){
 
     }
     fclose(wavFile);
+
+    for(int i = 0; i < wavHeader.Subchunk2Size/2; i++){
+        printf("%d\n", data_array[i]);
+    }
 
 	return 0;
 }

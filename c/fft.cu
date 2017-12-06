@@ -28,7 +28,7 @@ typedef float2 Complex;
 void runTest(int argc, char** argv);
 
 // The filter size is assumed to be a number smaller than the signal size
-#define SIGNAL_SIZE        1000
+#define SIGNAL_SIZE        100
 // #define FILTER_KERNEL_SIZE 11
 
 ////////////////////////////////////////////////////////////////////////////////

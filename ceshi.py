@@ -33,12 +33,12 @@ nchannels=1
 sampwidth=2
 
 sine_wave = [np.sin(2 * np.pi * frequency * x/sampling_rate) for x in range(num_samples)]
-sine_noise = [np.sin(2 * np.pi * noisy_freq * x1/  sampling_rate) for x1 in range(num_samples)]
+# sine_noise = [np.sin(2 * np.pi * noisy_freq * x1/  sampling_rate) for x1 in range(num_samples)]
 
 sine_wave = np.array(sine_wave)
  
-sine_noise = np.array(sine_noise)
-combined_signal = sine_wave + sine_noise
+# sine_noise = np.array(sine_noise)
+combined_signal = sine_wave # + sine_noise
 
 wav_file=wave.open(file, 'w')
 wav_file.setparams((nchannels, sampwidth, int(sampling_rate), nframes, comptype, compname))

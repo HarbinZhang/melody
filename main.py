@@ -9,7 +9,7 @@ import matplotlib.pyplot as plt
 # display data
 
 
-infile = "newone.wav"
+infile = "test.wav"
 
 infile = wave.open(infile, 'r')
 sampwidth = infile.getsampwidth()
@@ -50,15 +50,15 @@ data = infile.readframes(num_samples)
  
 infile.close()
 
-print data[12000]
+# print data[12000]
 
 data = struct.unpack('{n}h'.format(n=num_samples), data)
 
-print data[12000]
+# print data[12000]
 
-data = np.array(data)
+# data = np.array(data)
 
-print data[10200]
+# print data[12000]
 # data_fft = np.fft.fft(data)
 
 # freq = np.abs(data_fft)
@@ -70,10 +70,10 @@ print data[10200]
 # # Display
 
 
-# plt.subplot(4,1,1)
-# plt.plot(data)
-# plt.title("Original audio wave")
-# plt.subplots_adjust(hspace=.5) 
+plt.subplot(4,1,1)
+plt.plot(data)
+plt.title("Original audio wave")
+plt.subplots_adjust(hspace=.5) 
 
 # plt.subplot(4,1,2)
 # plt.plot(freq)
@@ -90,4 +90,4 @@ print data[10200]
 # plt.title("partial Frequencies found")
 # plt.xlim(0,1200)
  
-# plt.show()
+plt.show()
