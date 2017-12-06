@@ -74,6 +74,8 @@ int main(int argc, char ** argv) {
     }
     fclose(wavFile);
 
+
+
     printf("[simpleCUFFT] is starting...\n");
     // Allocate host memory for the signal
     // Complex* h_signal = (Complex*)malloc(sizeof(Complex) * SIGNAL_SIZE);
@@ -105,7 +107,10 @@ int main(int argc, char ** argv) {
     printf("Transforming signal cufftExecC2C\n");
     cufftExecR2C(plan, (float *)g_signal, (Complex *)g_out);    
 
-    
+    // cuda mem copy to host
+
+
+
     // Transform signal back
     printf("Transforming signal back cufftExecC2C\n");
     cufftExecC2R(plan, (Complex *)g_out, (float *)g_signal);

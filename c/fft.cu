@@ -51,7 +51,8 @@ void runTest(int argc, char** argv)
     // Initalize the memory for the signal
     for (unsigned int i = 0; i < SIGNAL_SIZE; ++i) {
         // h_signal[i].x = rand() / (float)RAND_MAX;
-        h_signal[i].x = sin(0.001*(float)i);
+        // h_signal[i].x = sin(0.001*(float)i);
+        h_signal[i].x = 1;
         h_signal[i].y = 0;
         printf("%f\n", h_signal[i].x);
     }
@@ -98,6 +99,8 @@ void runTest(int argc, char** argv)
     // for(int i = 0; i < SIGNAL_SIZE; i++){
     //     printf("%f\n", d_signal[i].x);
     // }
+
+    
 
     // Multiply the coefficients together and normalize the result
     // printf("Launching ComplexPointwiseMulAndScale<<< >>>\n");
