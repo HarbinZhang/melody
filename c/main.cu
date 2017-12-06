@@ -51,7 +51,7 @@ int main(int argc, char ** argv) {
     
     //Read the header
     size_t bytesRead = fread(&wavHeader, 1, headerSize, wavFile);
-    short data_array[wavHeader.Subchunk2Size/2];
+    short data_array[wavHeader.Subchunk2Size];
     if (bytesRead > 0)
     {
 
@@ -82,7 +82,7 @@ int main(int argc, char ** argv) {
     float* h_signal = (float*) malloc(sizeof(float) * SIGNAL_SIZE);
 
     // memcpy(h_signal, &data_array[0], SIGNAL_SIZE);
-    for(int i = 0; i < wavHeader.Subchunk2Size/2; i++){
+    for(int i = 0; i < SIGNAL_SIZE; i++){
         h_signal[i] = (float) data_array[i];
     }
 
