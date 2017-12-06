@@ -3,7 +3,7 @@
 #PBS -N Final
 #PBS -A eecs587-f17_fluxg
 #PBS -l qos=flux
-#PBS -l nodes=1:gpus=1,walltime=0:4:59
+#PBS -l nodes=1:gpus=1,walltime=0:0:59
 #PBS -l mem=2gb
 #PBS -q fluxg
 #PBS -m n
