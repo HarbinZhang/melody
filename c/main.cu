@@ -182,4 +182,4 @@ __global__ void cufftComplex2real(cufftComplex* in, float* out, int N){
     out[i] = in[i].x / (float)N;
 }
 
-__global__ void 
+// __global__ void 
