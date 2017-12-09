@@ -9,7 +9,7 @@
 // Complex data type
 typedef float2 Complex;
 
-#define SIGNAL_SIZE 100
+#define SIGNAL_SIZE 2000
 
 typedef struct  WAV_HEADER
 {
@@ -136,7 +136,7 @@ int main(int argc, char ** argv) {
 
 
     for(int i = 0; i < SIGNAL_SIZE; i++){
-        printf("%f\n", h_fft[i].y);
+        printf("%f\n", h_fft[i].x);
     }
 
 
@@ -170,4 +170,7 @@ int getFileSize(FILE* inFile)
 }
 
 
-__global__ void complex2real(Complex);
+__global__ void complex2real(Complex* in, float* out, int N){
+    int i = threadIdx.x;
+    out[i] = in[i].x / (float)N;
+}
