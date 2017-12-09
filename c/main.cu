@@ -6,10 +6,10 @@
 
 #define BUFFER_SIZE 4096
 
-// Complex data type
-typedef float2 Complex;
+// cufftComplex data type
+// typedef float2 cufftComplex;
 
-#define SIGNAL_SIZE 1000
+#define SIGNAL_SIZE 8
 
 typedef struct  WAV_HEADER
 {
@@ -79,12 +79,13 @@ int main(int argc, char ** argv) {
 
     printf("[simpleCUFFT] is starting...\n");
     // Allocate host memory for the signal
-    // Complex* h_signal = (Complex*)malloc(sizeof(Complex) * SIGNAL_SIZE);
-    Complex* h_signal = (Complex*) malloc(sizeof(Complex) * SIGNAL_SIZE);
+    // cufftComplex* h_signal = (cufftComplex*)malloc(sizeof(cufftComplex) * SIGNAL_SIZE);
+    cufftComplex* h_signal = (cufftComplex*) malloc(sizeof(cufftComplex) * SIGNAL_SIZE);
 
     // memcpy(h_signal, &data_array[0], SIGNAL_SIZE);
     for(int i = 0; i < SIGNAL_SIZE; i++){
-        h_signal[i].x = (float) data_array[i];
+        // h_signal[i].x = (float) data_array[i];
+        h_signal[i].x=1;
         h_signal[i].y = 0.0f;
     }
 
@@ -93,20 +94,20 @@ int main(int argc, char ** argv) {
     }
 
     // Initalize the memory for the signal
-    int mem_size = sizeof(Complex) * SIGNAL_SIZE;
+    int mem_size = sizeof(cufftComplex) * SIGNAL_SIZE;
 
     // Allocate device memory for signal
-    Complex* g_signal;
+    cufftComplex* g_signal;
     cudaMalloc((void**)&g_signal, mem_size);
     // Copy host memory to device
     cudaMemcpy(g_signal, h_signal, mem_size,
                cudaMemcpyHostToDevice);
 
-    Complex* g_out;
-    cudaMalloc((void**)&g_out, sizeof(Complex) * SIGNAL_SIZE);
+    cufftComplex* g_out;
+    cudaMalloc((void**)&g_out, sizeof(cufftComplex) * SIGNAL_SIZE);
 
-    Complex* h_fft;
-    h_fft = (Complex*) malloc(sizeof(Complex) * SIGNAL_SIZE);
+    cufftComplex* h_fft;
+    h_fft = (cufftComplex*) malloc(sizeof(cufftComplex) * SIGNAL_SIZE);
 
     // CUFFT plan
     cufftHandle plan;
@@ -114,25 +115,25 @@ int main(int argc, char ** argv) {
 
     // Transform signal and kernel
     printf("Transforming signal cufftExecC2C\n");
-    cufftResult err = cufftExecC2C(plan, (Complex *)g_signal, (Complex *)g_out, CUFFT_FORWARD);    
+    cufftResult err = cufftExecC2C(plan, (cufftComplex *)g_signal, (cufftComplex *)g_out, CUFFT_FORWARD);    
 
 
     // cuda mem copy to host
     
-    cudaMemcpy(h_fft, g_out, sizeof(Complex) * SIGNAL_SIZE, 
+    cudaMemcpy(h_fft, g_out, sizeof(cufftComplex) * SIGNAL_SIZE, 
         cudaMemcpyDeviceToHost);
 
 
-    Complex* g_signal_out;
+    cufftComplex* g_signal_out;
     cudaMalloc((void**)&g_signal_out, mem_size);
 
     // Transform signal back
     printf("Transforming signal back cufftExecC2C\n");
-    cufftExecC2C(plan, (Complex *)g_out, (Complex *)g_signal_out, CUFFT_INVERSE);
+    cufftExecC2C(plan, (cufftComplex *)g_out, (cufftComplex *)g_signal_out, CUFFT_INVERSE);
 
 
     // float* h_out = h_signal;
-    Complex* h_out = (Complex*) malloc(sizeof(Complex) * SIGNAL_SIZE);
+    cufftComplex* h_out = (cufftComplex*) malloc(sizeof(cufftComplex) * SIGNAL_SIZE);
     cudaMemcpy(h_out, g_signal, mem_size, cudaMemcpyDeviceToHost);
 
 
@@ -172,7 +173,7 @@ int getFileSize(FILE* inFile)
 }
 
 
-__global__ void complex2real(Complex* in, float* out, int N){
+__global__ void cufftComplex2real(cufftComplex* in, float* out, int N){
     int i = threadIdx.x;
     out[i] = in[i].x / (float)N;
 }
