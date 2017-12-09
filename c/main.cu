@@ -157,16 +157,16 @@ int main(int argc, char ** argv) {
     auto end = std::chrono::system_clock::now();
     std::chrono::duration<double> elapsed_seconds = end-start;
     printf("Time using in CPU is : %f\n", elapsed_seconds);
-    printf("Error info: %s\n", err);
+    // printf("Error info: %s\n", err);
 
-    cufftDestroy(plan);
+    
 
     free(h_signal);
     free(h_fft);
 
     cudaFree(g_signal);
     cudaFree(g_out);
-    cudaFree(g_signal_out);
+    // cudaFree(g_signal_out);
 
     return 0;
 }
@@ -208,9 +208,12 @@ __global__ void all_in(cufftComplex* in, cufftComplex* out){
 
     // get biggest FFT
     int k = 0;
+    float max_fft_value = (local_out[k].x > 0) ? local_out[k].x:-local_out[k].x;
     for(int i = 0; i < SIGNAL_SIZE / 2; i++){
-        if(abs(local_out[i]) > abs(local_out[k])){
+        float curt = (local_out[i].x > 0) ? local_out[i].x:-local_out[i].x;
+        if(curt > max_fft_value){
             k = i;
+            max_fft_value = curt;
         }
     }
 
@@ -219,4 +222,7 @@ __global__ void all_in(cufftComplex* in, cufftComplex* out){
     out[index].x = freq;
     out[index].y = 0.0f;
 
+    cufftDestroy(plan);
+
 }
+
