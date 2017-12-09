@@ -170,4 +170,4 @@ int getFileSize(FILE* inFile)
 }
 
 
-__global__ void complex2real(Complex)
+__global__ void complex2real(Complex);
