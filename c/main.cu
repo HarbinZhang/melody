@@ -105,6 +105,9 @@ int main(int argc, char ** argv) {
     Complex* g_out;
     cudaMalloc((void**)&g_out, sizeof(Complex) * SIGNAL_SIZE);
 
+    Complex* h_fft;
+    h_fft = (Complex*) malloc(sizeof(Complex) * SIGNAL_SIZE);
+
     // CUFFT plan
     cufftHandle plan;
     cufftPlan1d(&plan, SIGNAL_SIZE, CUFFT_R2C, 1);
@@ -115,32 +118,37 @@ int main(int argc, char ** argv) {
 
     // cuda mem copy to host
     
+    cudaMemcpy(h_fft, g_out, sizeof(Complex) * SIGNAL_SIZE, 
+        cudaMemcpyDeviceToHost);
 
 
-    // Transform signal back
-    printf("Transforming signal back cufftExecC2C\n");
-    cufftExecC2R(plan, (Complex *)g_out, (float *)g_signal);
+
+    // // Transform signal back
+    // printf("Transforming signal back cufftExecC2C\n");
+    // cufftExecC2R(plan, (Complex *)g_out, (float *)g_signal);
 
 
-    float* h_out = h_signal;
-    cudaMemcpy(h_out, g_signal, mem_size, cudaMemcpyDeviceToHost);
+    // float* h_out = h_signal;
+    // cudaMemcpy(h_out, g_signal, mem_size, cudaMemcpyDeviceToHost);
 
 
     for(int i = 0; i < SIGNAL_SIZE; i++){
-        printf("%f\n", h_out[i]);
+        printf("%f\n", h_fft[i].x);
     }
 
 
     auto end = std::chrono::system_clock::now();
     std::chrono::duration<double> elapsed_seconds = end-start;
     printf("Time using in CPU is : %f\n", elapsed_seconds);
-    
+
     cufftDestroy(plan);
 
     free(h_signal);
+    free(h_fft);
 
     cudaFree(g_signal);
     cudaFree(g_out);
+
 
     return 0;
 }
