@@ -118,22 +118,25 @@ int main(int argc, char ** argv) {
 
     // cuda mem copy to host
     
-    cudaMemcpy(h_fft, g_out, sizeof(Complex) * SIGNAL_SIZE, 
-        cudaMemcpyDeviceToHost);
+    // cudaMemcpy(h_fft, g_out, sizeof(Complex) * SIGNAL_SIZE, 
+    //     cudaMemcpyDeviceToHost);
 
 
+    float* g_signal_out;
+    cudaMalloc((void**)&g_signal_out, mem_size);
 
-    // // Transform signal back
-    // printf("Transforming signal back cufftExecC2C\n");
-    // cufftExecC2R(plan, (Complex *)g_out, (float *)g_signal);
+    // Transform signal back
+    printf("Transforming signal back cufftExecC2C\n");
+    cufftExecC2R(plan, (Complex *)g_out, (float *)g_signal_out);
 
 
     // float* h_out = h_signal;
-    // cudaMemcpy(h_out, g_signal, mem_size, cudaMemcpyDeviceToHost);
+    float* h_out = (float*) malloc(sizeof(float) * SIGNAL_SIZE);
+    cudaMemcpy(h_out, g_signal, mem_size, cudaMemcpyDeviceToHost);
 
 
     for(int i = 0; i < SIGNAL_SIZE; i++){
-        printf("%f\n", h_fft[i].x);
+        printf("%f\n", h_out[i]);
     }
 
 
@@ -148,6 +151,7 @@ int main(int argc, char ** argv) {
 
     cudaFree(g_signal);
     cudaFree(g_out);
+    cudaFree(g_signal_out);
 
 
     return 0;
