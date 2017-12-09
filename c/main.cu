@@ -9,7 +9,7 @@
 // cufftComplex data type
 // typedef float2 cufftComplex;
 
-#define SIGNAL_SIZE 8
+#define SIGNAL_SIZE 100
 
 typedef struct  WAV_HEADER
 {
@@ -84,8 +84,8 @@ int main(int argc, char ** argv) {
 
     // memcpy(h_signal, &data_array[0], SIGNAL_SIZE);
     for(int i = 0; i < SIGNAL_SIZE; i++){
-        // h_signal[i].x = (float) data_array[i];
-        h_signal[i].x=100000;
+        h_signal[i].x = (float) data_array[i];
+        // h_signal[i].x=100000;
         h_signal[i].y = 0.0f;
     }
 
@@ -140,6 +140,8 @@ int main(int argc, char ** argv) {
     for(int i = 0; i < SIGNAL_SIZE; i++){
         printf("fft[%d]: %f\n", i, h_fft[i].x);
     }
+
+    printf("%s\n", "from here hi!");
 
     for(int i = 0; i < SIGNAL_SIZE; i++){
         printf("fft[%d]: %f\n", i, h_out[i].x);
