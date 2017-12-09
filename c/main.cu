@@ -85,7 +85,7 @@ int main(int argc, char ** argv) {
     // memcpy(h_signal, &data_array[0], SIGNAL_SIZE);
     for(int i = 0; i < SIGNAL_SIZE; i++){
         // h_signal[i].x = (float) data_array[i];
-        h_signal[i].x=1;
+        h_signal[i].x=100000;
         h_signal[i].y = 0.0f;
     }
 
@@ -139,6 +139,10 @@ int main(int argc, char ** argv) {
 
     for(int i = 0; i < SIGNAL_SIZE; i++){
         printf("fft[%d]: %f\n", i, h_fft[i].x);
+    }
+
+    for(int i = 0; i < SIGNAL_SIZE; i++){
+        printf("fft[%d]: %f\n", i, h_out[i].x);
     }
 
 
