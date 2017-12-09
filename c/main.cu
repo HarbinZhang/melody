@@ -9,7 +9,7 @@
 // Complex data type
 typedef float2 Complex;
 
-#define SIGNAL_SIZE 100
+#define SIGNAL_SIZE 1000
 
 typedef struct  WAV_HEADER
 {
@@ -72,7 +72,6 @@ int main(int argc, char ** argv) {
         delete [] buffer;
         buffer = nullptr;
         printf("%d\n", i);
-
     }
     fclose(wavFile);
 
@@ -138,7 +137,7 @@ int main(int argc, char ** argv) {
 
 
     for(int i = 0; i < SIGNAL_SIZE; i++){
-        printf("fft[%d]: %f\n", i, h_fft[i].x);
+        printf("fft[%d]: %f\n", i, h_out[i].x);
     }
 
 
