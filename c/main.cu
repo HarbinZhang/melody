@@ -114,12 +114,13 @@ int main(int argc, char ** argv) {
 
     // Transform signal and kernel
     printf("Transforming signal cufftExecC2C\n");
-    cufftExecR2C(plan, (float *)g_signal, (Complex *)g_out);    
+    cufftResult err = cufftExecR2C(plan, (float *)g_signal, (Complex *)g_out);    
+
 
     // cuda mem copy to host
     
-    // cudaMemcpy(h_fft, g_out, sizeof(Complex) * SIGNAL_SIZE, 
-    //     cudaMemcpyDeviceToHost);
+    cudaMemcpy(h_fft, g_out, sizeof(Complex) * SIGNAL_SIZE, 
+        cudaMemcpyDeviceToHost);
 
 
     float* g_signal_out;
@@ -136,7 +137,7 @@ int main(int argc, char ** argv) {
 
 
     for(int i = 0; i < SIGNAL_SIZE; i++){
-        printf("%f\n", h_out[i]);
+        printf("%f\n", h_fft[i].x);
     }
 
 
