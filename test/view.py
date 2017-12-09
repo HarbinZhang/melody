@@ -8,9 +8,28 @@ infile = "data"
 infile = open(infile, 'r')
 
 data = infile.read().split('\n')
+data = map(float, data)
+
+data = np.array(data)
+data_fft = np.fft.fft(data)
+freq = np.abs(data_fft)
+print data_fft
 
 
-
+plt.subplot(3,1,1)
+ 
 plt.plot(data)
-plt.xlim(0, 200)
+ 
+plt.title("Original audio wave")
+ 
+plt.subplots_adjust(hspace=.5) 
+
+plt.subplot(3,1,2)
+ 
+plt.plot(freq)
+ 
+plt.title("Frequencies found")
+ 
+plt.xlim(0,120)
+
 plt.show()
