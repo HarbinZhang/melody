@@ -9,7 +9,7 @@
 // Complex data type
 typedef float2 Complex;
 
-#define SIGNAL_SIZE 2000
+#define SIGNAL_SIZE 1200
 
 typedef struct  WAV_HEADER
 {
