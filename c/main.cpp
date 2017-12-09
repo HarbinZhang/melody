@@ -2,6 +2,7 @@
 #include <string>
 #include <fstream>
 #include <cstdint>
+#include <rfftw.h>
 
 // using namespace std;
 
@@ -112,9 +113,17 @@ int main(int argc, char* argv[]){
     }
     fclose(wavFile);
 
-    for(int i = 0; i < wavHeader.Subchunk2Size/2; i++){
-        printf("%d\n", data_array[i]);
+    // for(int i = 0; i < wavHeader.Subchunk2Size/2; i++){
+    //     printf("%d\n", data_array[i]);
+    // }
+
+    int N = 1000;
+
+    fftw_real in[N],out[N];
+    for(int i = 0; i < N; i++){
+        in[i] = data_array[i];
     }
+
 
 	return 0;
 }
