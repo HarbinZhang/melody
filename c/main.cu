@@ -9,7 +9,7 @@
 // cufftComplex data type
 // typedef float2 cufftComplex;
 
-#define SIGNAL_SIZE 100
+#define SIGNAL_SIZE 1500
 
 typedef struct  WAV_HEADER
 {
@@ -147,7 +147,6 @@ int main(int argc, char ** argv) {
         printf("fft[%d]: %f\n", i, h_out[i].x);
     }
 
-
     auto end = std::chrono::system_clock::now();
     std::chrono::duration<double> elapsed_seconds = end-start;
     printf("Time using in CPU is : %f\n", elapsed_seconds);
@@ -161,7 +160,6 @@ int main(int argc, char ** argv) {
     cudaFree(g_signal);
     cudaFree(g_out);
     cudaFree(g_signal_out);
-
 
     return 0;
 }
