@@ -52,6 +52,8 @@ int main(int argc, char ** argv) {
     //Read the header
     size_t bytesRead = fread(&wavHeader, 1, headerSize, wavFile);
     short data_array[wavHeader.Subchunk2Size];
+
+    auto start = std::chrono::system_clock::now();
     if (bytesRead > 0)
     {
 
@@ -112,7 +114,7 @@ int main(int argc, char ** argv) {
     cufftExecR2C(plan, (float *)g_signal, (Complex *)g_out);    
 
     // cuda mem copy to host
-
+    
 
 
     // Transform signal back
@@ -128,6 +130,11 @@ int main(int argc, char ** argv) {
         printf("%f\n", h_out[i]);
     }
 
+
+    auto end = std::chrono::system_clock::now();
+    std::chrono::duration<double> elapsed_seconds = end-start;
+    printf("Time using in CPU is : %f\n", elapsed_seconds);
+    
     cufftDestroy(plan);
 
     free(h_signal);
