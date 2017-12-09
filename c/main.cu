@@ -136,7 +136,7 @@ int main(int argc, char ** argv) {
 
 
     for(int i = 0; i < SIGNAL_SIZE; i++){
-        printf("%f\n", h_fft[i].x);
+        printf("%f\n", h_out[i]);
     }
 
 
