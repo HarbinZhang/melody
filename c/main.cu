@@ -115,7 +115,7 @@ int main(int argc, char ** argv) {
 
     // Transform signal and kernel
     printf("Transforming signal cufftExecC2C\n");
-    cufftResult err = cufftExecC2C(plan, (Complex *)g_signal, (Complex *)g_out);    
+    cufftResult err = cufftExecC2C(plan, (Complex *)g_signal, (Complex *)g_out, CUFFT_FORWARD);    
 
 
     // cuda mem copy to host
