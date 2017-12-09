@@ -22,17 +22,20 @@ data = struct.unpack('{n}h'.format(n=num_samples), data)
 
 data = np.array(data)
 
-data_fft = np.fft.fft(data)
+# for i in range(3000):
+# 	print data[i]
+
+data_fft = np.fft.fft(data[1:4800])
 
 frequencies = np.abs(data_fft)
 
 # filtered_freq
-for i in range(len(frequencies)):
-	# if 950 < i < 1050 and frequencies[i] > 1 :
-	if 950 < i < 1050 :
-		frequencies[i] = frequencies[i]
-	else:
-		frequencies[i] = 0
+# for i in range(len(frequencies)):
+# 	# if 950 < i < 1050 and frequencies[i] > 1 :
+# 	if 950 < i < 1050 :
+# 		frequencies[i] = frequencies[i]
+# 	else:
+# 		frequencies[i] = 0
 # filtered_freq = [f if (950 < index < 1050 and f > 1) else 0 for index, f in enumerate(frequencies)]
 recovered_signal = np.fft.ifft(frequencies)
 

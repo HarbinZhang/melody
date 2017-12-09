@@ -30,6 +30,5 @@ plt.plot(freq)
  
 plt.title("Frequencies found")
  
-plt.xlim(0,120)
 
 plt.show()

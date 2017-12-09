@@ -51,7 +51,7 @@ int main(int argc, char ** argv) {
     
     //Read the header
     size_t bytesRead = fread(&wavHeader, 1, headerSize, wavFile);
-    short data_array[wavHeader.Subchunk2Size];
+    short data_array[wavHeader.Subchunk2Size/2];
 
     auto start = std::chrono::system_clock::now();
     if (bytesRead > 0)
@@ -80,10 +80,10 @@ int main(int argc, char ** argv) {
     printf("[simpleCUFFT] is starting...\n");
     // Allocate host memory for the signal
     // cufftComplex* h_signal = (cufftComplex*)malloc(sizeof(cufftComplex) * SIGNAL_SIZE);
-    cufftComplex* h_signal = (cufftComplex*) malloc(sizeof(cufftComplex) * SIGNAL_SIZE);
+    cufftComplex* h_signal = (cufftComplex*) malloc(sizeof(cufftComplex) * wavHeader.Subchunk2Size/2);
 
     // memcpy(h_signal, &data_array[0], SIGNAL_SIZE);
-    for(int i = 0; i < SIGNAL_SIZE; i++){
+    for(int i = 0; i < wavHeader.Subchunk2Size/2; i++){
         h_signal[i].x = (float) data_array[i];
         // h_signal[i].x=100000;
         h_signal[i].y = 0.0f;
@@ -94,7 +94,7 @@ int main(int argc, char ** argv) {
     }
 
     // Initalize the memory for the signal
-    int mem_size = sizeof(cufftComplex) * SIGNAL_SIZE;
+    int mem_size = sizeof(cufftComplex) * wavHeader.Subchunk2Size/2;
 
     // Allocate device memory for signal
     cufftComplex* g_signal;
@@ -104,10 +104,10 @@ int main(int argc, char ** argv) {
                cudaMemcpyHostToDevice);
 
     cufftComplex* g_out;
-    cudaMalloc((void**)&g_out, sizeof(cufftComplex) * SIGNAL_SIZE);
+    cudaMalloc((void**)&g_out, sizeof(cufftComplex) * wavHeader.Subchunk2Size/2);
 
     cufftComplex* h_fft;
-    h_fft = (cufftComplex*) malloc(sizeof(cufftComplex) * SIGNAL_SIZE);
+    h_fft = (cufftComplex*) malloc(sizeof(cufftComplex) * wavHeader.Subchunk2Size/2);
 
     // CUFFT plan
     cufftHandle plan;
@@ -120,7 +120,7 @@ int main(int argc, char ** argv) {
 
     // cuda mem copy to host
     
-    cudaMemcpy(h_fft, g_out, sizeof(cufftComplex) * SIGNAL_SIZE, 
+    cudaMemcpy(h_fft, g_out, sizeof(cufftComplex) * wavHeader.Subchunk2Size/2, 
         cudaMemcpyDeviceToHost);
 
 
@@ -133,7 +133,7 @@ int main(int argc, char ** argv) {
 
 
     // float* h_out = h_signal;
-    cufftComplex* h_out = (cufftComplex*) malloc(sizeof(cufftComplex) * SIGNAL_SIZE);
+    cufftComplex* h_out = (cufftComplex*) malloc(sizeof(cufftComplex) * wavHeader.Subchunk2Size/2);
     cudaMemcpy(h_out, g_signal, mem_size, cudaMemcpyDeviceToHost);
 
 
@@ -181,3 +181,5 @@ __global__ void cufftComplex2real(cufftComplex* in, float* out, int N){
     int i = threadIdx.x;
     out[i] = in[i].x / (float)N;
 }
+
+__global__ void 
