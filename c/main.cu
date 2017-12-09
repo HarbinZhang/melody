@@ -32,7 +32,7 @@ typedef struct  WAV_HEADER
 } wav_hdr;
 int getFileSize(FILE* inFile);
 
-
+__global__ void all_in(cufftComplex* in, cufftComplex* out);
 
 int main(int argc, char ** argv) {
     wav_hdr wavHeader;
