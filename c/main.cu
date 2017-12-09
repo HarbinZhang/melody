@@ -76,6 +76,7 @@ int main(int argc, char ** argv) {
     fclose(wavFile);
 
 
+    int blockSize = wavHeader.Subchunk2Size/SIGNAL_SIZE/2048 + 1;
 
     printf("[simpleCUFFT] is starting...\n");
     // Allocate host memory for the signal
@@ -89,9 +90,9 @@ int main(int argc, char ** argv) {
         h_signal[i].y = 0.0f;
     }
 
-    for(int i = 0; i < SIGNAL_SIZE; i++){
-        printf("%f\n", h_signal[i].x);
-    }
+    // for(int i = 0; i < SIGNAL_SIZE; i++){
+    //     printf("%f\n", h_signal[i].x);
+    // }
 
     // Initalize the memory for the signal
     int mem_size = sizeof(cufftComplex) * wavHeader.Subchunk2Size/2;
@@ -104,48 +105,54 @@ int main(int argc, char ** argv) {
                cudaMemcpyHostToDevice);
 
     cufftComplex* g_out;
-    cudaMalloc((void**)&g_out, sizeof(cufftComplex) * wavHeader.Subchunk2Size/2);
+    cudaMalloc((void**)&g_out, sizeof(cufftComplex) * wavHeader.Subchunk2Size/2/SIGNAL_SIZE);
 
     cufftComplex* h_fft;
-    h_fft = (cufftComplex*) malloc(sizeof(cufftComplex) * wavHeader.Subchunk2Size/2);
+    h_fft = (cufftComplex*) malloc(sizeof(cufftComplex) * wavHeader.Subchunk2Size/2/SIGNAL_SIZE);
+
+
+
+
+    all_in<<<blockSize, SIGNAL_SIZE>>>(g_signal, g_out);
+
 
     // CUFFT plan
-    cufftHandle plan;
-    cufftPlan1d(&plan, SIGNAL_SIZE, CUFFT_C2C, 1);
+    // cufftHandle plan;
+    // cufftPlan1d(&plan, SIGNAL_SIZE, CUFFT_C2C, 1);
 
     // Transform signal and kernel
-    printf("Transforming signal cufftExecC2C\n");
-    cufftResult err = cufftExecC2C(plan, (cufftComplex *)g_signal, (cufftComplex *)g_out, CUFFT_FORWARD);    
+    // printf("Transforming signal cufftExecC2C\n");
+    // cufftResult err = cufftExecC2C(plan, (cufftComplex *)g_signal, (cufftComplex *)g_out, CUFFT_FORWARD);    
 
 
     // cuda mem copy to host
     
-    cudaMemcpy(h_fft, g_out, sizeof(cufftComplex) * wavHeader.Subchunk2Size/2, 
+    cudaMemcpy(h_fft, g_out, sizeof(cufftComplex) * wavHeader.Subchunk2Size/2/SIGNAL_SIZE, 
         cudaMemcpyDeviceToHost);
 
 
-    cufftComplex* g_signal_out;
-    cudaMalloc((void**)&g_signal_out, mem_size);
+    // cufftComplex* g_signal_out;
+    // cudaMalloc((void**)&g_signal_out, mem_size);
 
-    // Transform signal back
-    printf("Transforming signal back cufftExecC2C\n");
-    cufftExecC2C(plan, (cufftComplex *)g_out, (cufftComplex *)g_signal_out, CUFFT_INVERSE);
+    // // Transform signal back
+    // printf("Transforming signal back cufftExecC2C\n");
+    // cufftExecC2C(plan, (cufftComplex *)g_out, (cufftComplex *)g_signal_out, CUFFT_INVERSE);
 
 
-    // float* h_out = h_signal;
-    cufftComplex* h_out = (cufftComplex*) malloc(sizeof(cufftComplex) * wavHeader.Subchunk2Size/2);
-    cudaMemcpy(h_out, g_signal, mem_size, cudaMemcpyDeviceToHost);
+    // // float* h_out = h_signal;
+    // cufftComplex* h_out = (cufftComplex*) malloc(sizeof(cufftComplex) * wavHeader.Subchunk2Size/2);
+    // cudaMemcpy(h_out, g_signal, mem_size, cudaMemcpyDeviceToHost);
 
 
     for(int i = 0; i < SIGNAL_SIZE; i++){
         printf("fft[%d]: %f\n", i, h_fft[i].x);
     }
 
-    printf("%s\n", "from here hi!");
+    // printf("%s\n", "from here hi!");
 
-    for(int i = 0; i < SIGNAL_SIZE; i++){
-        printf("fft[%d]: %f\n", i, h_out[i].x);
-    }
+    // for(int i = 0; i < SIGNAL_SIZE; i++){
+    //     printf("fft[%d]: %f\n", i, h_out[i].x);
+    // }
 
     auto end = std::chrono::system_clock::now();
     std::chrono::duration<double> elapsed_seconds = end-start;
@@ -177,9 +184,39 @@ int getFileSize(FILE* inFile)
 }
 
 
-__global__ void cufftComplex2real(cufftComplex* in, float* out, int N){
-    int i = threadIdx.x;
-    out[i] = in[i].x / (float)N;
-}
 
-// __global__ void 
+
+__global__ void all_in(cufftComplex* in, cufftComplex* out){
+    int index = threadIdx.x + blockIdx.x * 1024;
+
+    // copy to local memory
+
+    // here: optimized
+    cufftComplex local_in[SIGNAL_SIZE];
+    cufftComplex local_out[SIGNAL_SIZE];
+
+    for(int i = 0; i < SIGNAL_SIZE; i++){
+        local_in[i] = in[i+index*SIGNAL_SIZE];
+    }
+
+    cufftHandle plan;
+    cufftPlan1d(&plan, SIGNAL_SIZE, CUFFT_C2C, 1);
+
+    // cufftResult err = cufftExecC2C(plan, (cufftComplex *)in[SIGNAL_SIZE*index:SIGNAL_SIZE*(index+1)-1], (cufftComplex *)g_out, CUFFT_FORWARD);    
+    cufftResult err = cufftExecC2C(plan, (cufftComplex *)&local_in, (cufftComplex *)&local_out, CUFFT_FORWARD);    
+
+
+    // get biggest FFT
+    int k = 0;
+    for(int i = 0; i < SIGNAL_SIZE / 2; i++){
+        if(abs(local_out[i]) > abs(local_out[k])){
+            k = i;
+        }
+    }
+
+    float freq = k * 48000/SIGNAL_SIZE;
+
+    out[index].x = freq;
+    out[index].y = 0.0f;
+
+}
