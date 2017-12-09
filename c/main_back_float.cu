@@ -81,23 +81,22 @@ int main(int argc, char ** argv) {
     printf("[simpleCUFFT] is starting...\n");
     // Allocate host memory for the signal
     // Complex* h_signal = (Complex*)malloc(sizeof(Complex) * SIGNAL_SIZE);
-    Complex* h_signal = (Complex*) malloc(sizeof(Complex) * SIGNAL_SIZE);
+    float* h_signal = (float*) malloc(sizeof(float) * SIGNAL_SIZE);
 
     // memcpy(h_signal, &data_array[0], SIGNAL_SIZE);
     for(int i = 0; i < SIGNAL_SIZE; i++){
-        h_signal[i].x = (float) data_array[i];
-        h_signal[i].y = 0.0f;
+        h_signal[i] = (float) data_array[i];
     }
 
     for(int i = 0; i < SIGNAL_SIZE; i++){
-        printf("%f\n", h_signal[i].x);
+        printf("%f\n", h_signal[i]);
     }
 
     // Initalize the memory for the signal
-    int mem_size = sizeof(Complex) * SIGNAL_SIZE;
+    int mem_size = sizeof(float) * SIGNAL_SIZE;
 
     // Allocate device memory for signal
-    Complex* g_signal;
+    float* g_signal;
     cudaMalloc((void**)&g_signal, mem_size);
     // Copy host memory to device
     cudaMemcpy(g_signal, h_signal, mem_size,
@@ -111,11 +110,11 @@ int main(int argc, char ** argv) {
 
     // CUFFT plan
     cufftHandle plan;
-    cufftPlan1d(&plan, SIGNAL_SIZE, CUFFT_C2C, 1);
+    cufftPlan1d(&plan, SIGNAL_SIZE, CUFFT_R2C, 1);
 
     // Transform signal and kernel
     printf("Transforming signal cufftExecC2C\n");
-    cufftResult err = cufftExecC2C(plan, (Complex *)g_signal, (Complex *)g_out);    
+    cufftResult err = cufftExecR2C(plan, (float *)g_signal, (Complex *)g_out);    
 
 
     // cuda mem copy to host
