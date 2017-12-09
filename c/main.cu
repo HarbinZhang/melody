@@ -9,7 +9,7 @@
 // Complex data type
 typedef float2 Complex;
 
-#define SIGNAL_SIZE 1200
+#define SIGNAL_SIZE 100
 
 typedef struct  WAV_HEADER
 {
@@ -124,16 +124,16 @@ int main(int argc, char ** argv) {
         cudaMemcpyDeviceToHost);
 
 
-    float* g_signal_out;
+    Complex* g_signal_out;
     cudaMalloc((void**)&g_signal_out, mem_size);
 
     // Transform signal back
     printf("Transforming signal back cufftExecC2C\n");
-    cufftExecC2R(plan, (Complex *)g_out, (float *)g_signal_out);
+    cufftExecC2C(plan, (Complex *)g_out, (Complex *)g_signal_out, CUFFT_INVERSE);
 
 
     // float* h_out = h_signal;
-    float* h_out = (float*) malloc(sizeof(float) * SIGNAL_SIZE);
+    Complex* h_out = (Complex*) malloc(sizeof(Complex) * SIGNAL_SIZE);
     cudaMemcpy(h_out, g_signal, mem_size, cudaMemcpyDeviceToHost);
 
 
