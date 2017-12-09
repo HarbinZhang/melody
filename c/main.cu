@@ -122,17 +122,17 @@ int main(int argc, char ** argv) {
     //     cudaMemcpyDeviceToHost);
 
 
-    // float* g_signal_out;
-    // cudaMalloc((void**)&g_signal_out, mem_size);
+    float* g_signal_out;
+    cudaMalloc((void**)&g_signal_out, mem_size);
 
-    // // Transform signal back
-    // printf("Transforming signal back cufftExecC2C\n");
-    // cufftExecC2R(plan, (Complex *)g_out, (float *)g_signal_out);
+    // Transform signal back
+    printf("Transforming signal back cufftExecC2C\n");
+    cufftExecC2R(plan, (Complex *)g_out, (float *)g_signal_out);
 
 
-    // // float* h_out = h_signal;
-    // float* h_out = (float*) malloc(sizeof(float) * SIGNAL_SIZE);
-    // cudaMemcpy(h_out, g_signal, mem_size, cudaMemcpyDeviceToHost);
+    // float* h_out = h_signal;
+    float* h_out = (float*) malloc(sizeof(float) * SIGNAL_SIZE);
+    cudaMemcpy(h_out, g_signal, mem_size, cudaMemcpyDeviceToHost);
 
 
     for(int i = 0; i < SIGNAL_SIZE; i++){
