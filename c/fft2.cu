@@ -32,8 +32,8 @@ int main()
 
         int n[1] = {3};
         cufftResult res = cufftPlanMany(&plan, 1, n,
-        NULL, 1, 4,  //advanced data layout, NULL shuts it off
-        NULL, 1, 4,  //advanced data layout, NULL shuts it off
+        NULL, 1, 0,  //advanced data layout, NULL shuts it off
+        NULL, 1, 0,  //advanced data layout, NULL shuts it off
         CUFFT_C2C, 4);    
 
         
