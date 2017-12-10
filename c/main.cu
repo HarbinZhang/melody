@@ -53,7 +53,7 @@ int main(int argc, char ** argv) {
     size_t bytesRead = fread(&wavHeader, 1, headerSize, wavFile);
     short data_array[wavHeader.Subchunk2Size/2];
 
-    auto start = std::chrono::system_clock::now();
+    
     if (bytesRead > 0)
     {
 
@@ -89,6 +89,8 @@ int main(int argc, char ** argv) {
         h_signal[i].y = 0.0f;
     }
 
+
+    auto start = std::chrono::system_clock::now();
     // Initalize the memory for the signal
     int mem_size = sizeof(cufftComplex) * wavHeader.Subchunk2Size/2;
 
