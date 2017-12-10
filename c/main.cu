@@ -9,7 +9,7 @@
 // cufftComplex data type
 // typedef float2 cufftComplex;
 
-#define SIGNAL_SIZE 8
+#define SIGNAL_SIZE 4096
 
 typedef struct  WAV_HEADER
 {
@@ -116,9 +116,9 @@ int main(int argc, char ** argv) {
     int n[1] = {SIGNAL_SIZE};
     cufftResult res = cufftPlanMany(&plan, 1, n,
         NULL, 1, SIGNAL_SIZE,  //advanced data layout, NULL shuts it off
-        NULL, 1, SIGNAL_SIZE/2,  //advanced data layout, NULL shuts it off
-        // CUFFT_C2C, wavHeader.Subchunk2Size/2/SIGNAL_SIZE);    
-        CUFFT_C2C, 3);
+        NULL, 1, SIGNAL_SIZE,  //advanced data layout, NULL shuts it off
+        CUFFT_C2C, wavHeader.Subchunk2Size/2/SIGNAL_SIZE);    
+        // CUFFT_C2C, 3);
 
 
     // all_in<<<blockSize, SIGNAL_SIZE>>>(g_signal, g_out);
@@ -135,7 +135,7 @@ int main(int argc, char ** argv) {
 
     // cuda mem copy to host
     
-    cudaMemcpy(h_fft, g_out, sizeof(cufftComplex) * wavHeader.Subchunk2Size/2/SIGNAL_SIZE, 
+    cudaMemcpy(h_fft, g_out, sizeof(cufftComplex) * wavHeader.Subchunk2Size/2, 
         cudaMemcpyDeviceToHost);
 
 
