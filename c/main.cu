@@ -209,7 +209,7 @@ __global__ void all_in(cufftComplex* in, cufftComplex* out){
 
     // here: optimized
     cufftComplex local_in[SIGNAL_SIZE];
-    cufftComplex local_out[SIGNAL_SIZE];
+    // cufftComplex local_in[SIGNAL_SIZE];
 
     for(int i = 0; i < SIGNAL_SIZE; i++){
         local_in[i] = in[i+index*SIGNAL_SIZE];
@@ -217,9 +217,9 @@ __global__ void all_in(cufftComplex* in, cufftComplex* out){
 
     // get biggest FFT
     int k = 0;
-    float max_fft_value = (local_out[k].x > 0) ? local_out[k].x:-local_out[k].x;
+    float max_fft_value = (local_in[k].x > 0) ? local_in[k].x:-local_in[k].x;
     for(int i = 0; i < SIGNAL_SIZE / 2; i++){
-        float curt = (local_out[i].x > 0) ? local_out[i].x:-local_out[i].x;
+        float curt = (local_in[i].x > 0) ? local_in[i].x:-local_in[i].x;
         if(curt > max_fft_value){
             k = i;
             max_fft_value = curt;
