@@ -9,7 +9,7 @@
 // cufftComplex data type
 // typedef float2 cufftComplex;
 
-#define SIGNAL_SIZE 4096
+#define SIGNAL_SIZE 8
 
 typedef struct  WAV_HEADER
 {
@@ -85,7 +85,8 @@ int main(int argc, char ** argv) {
 
     // memcpy(h_signal, &data_array[0], SIGNAL_SIZE);
     for(int i = 0; i < wavHeader.Subchunk2Size/2; i++){
-        h_signal[i].x = (float) data_array[i];
+        // h_signal[i].x = (float) data_array[i];
+        h_signal[i].x = 1.0f;
         h_signal[i].y = 0.0f;
     }
 
@@ -116,7 +117,8 @@ int main(int argc, char ** argv) {
     cufftResult res = cufftPlanMany(&plan, 1, n,
         NULL, 1, SIGNAL_SIZE,  //advanced data layout, NULL shuts it off
         NULL, 1, SIGNAL_SIZE,  //advanced data layout, NULL shuts it off
-        CUFFT_C2C, wavHeader.Subchunk2Size/2/SIGNAL_SIZE);    
+        // CUFFT_C2C, wavHeader.Subchunk2Size/2/SIGNAL_SIZE);    
+        CUFFT_C2C, 3);
 
 
     // all_in<<<blockSize, SIGNAL_SIZE>>>(g_signal, g_out);
@@ -150,7 +152,12 @@ int main(int argc, char ** argv) {
     // cudaMemcpy(h_out, g_signal, mem_size, cudaMemcpyDeviceToHost);
 
 
-    for(int i = (wavHeader.Subchunk2Size/2 - SIGNAL_SIZE); i < (wavHeader.Subchunk2Size/2); i++){
+    // for(int i = (wavHeader.Subchunk2Size/2 - SIGNAL_SIZE); i < (wavHeader.Subchunk2Size/2); i++){
+    //     printf("fft[%d]: %f\n", i, h_fft[i].x);
+    // }
+
+
+    for(int i = 0; i < 3 * SIGNAL_SIZE; i++){
         printf("fft[%d]: %f\n", i, h_fft[i].x);
     }
 

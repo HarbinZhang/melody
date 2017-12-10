@@ -76,23 +76,20 @@ int main(int argc, char ** argv) {
     fclose(wavFile);
 
 
-    int blockSize = wavHeader.Subchunk2Size/SIGNAL_SIZE/2048 + 1;
+
+
 
     printf("[simpleCUFFT] is starting...\n");
     // Allocate host memory for the signal
     // cufftComplex* h_signal = (cufftComplex*)malloc(sizeof(cufftComplex) * SIGNAL_SIZE);
-    cufftComplex* h_signal = (cufftComplex*) malloc(sizeof(cufftComplex) * wavHeader.Subchunk2Size/2);
+    cufftComplex* h_signal = (cufftComplex*) malloc(sizeof(cufftComplex) * SIGNAL_SIZE);
 
     // memcpy(h_signal, &data_array[0], SIGNAL_SIZE);
     for(int i = 0; i < wavHeader.Subchunk2Size/2; i++){
-        h_signal[i].x = (float) data_array[i];
+        h_signal[i].x = (float) data_array[bigi*SIGNAL_SIZE + i];
         // h_signal[i].x=100000;
         h_signal[i].y = 0.0f;
     }
-
-    // for(int i = 0; i < SIGNAL_SIZE; i++){
-    //     printf("%f\n", h_signal[i].x);
-    // }
 
     // Initalize the memory for the signal
     int mem_size = sizeof(cufftComplex) * SIGNAL_SIZE;
@@ -101,6 +98,10 @@ int main(int argc, char ** argv) {
     cufftComplex* g_signal;
     cudaMalloc((void**)&g_signal, mem_size);
     // Copy host memory to device
+
+
+
+
     cudaMemcpy(g_signal, h_signal, mem_size,
                cudaMemcpyHostToDevice);
 
