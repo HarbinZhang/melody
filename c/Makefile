@@ -17,7 +17,7 @@ fft2:
 
 main:
 	g++ -std=c++11 -lrfftw -lfftw -lm main.cpp -o main.out
-	./main.out test.wav
+	./main.out part_output.wav
 
 
 reader:
