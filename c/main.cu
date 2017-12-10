@@ -199,6 +199,10 @@ __global__ void all_in(cufftComplex* in, cufftComplex* out){
 
     // float freq = (k+1) * 48000.0f/(float)SIGNAL_SIZE;
 
+    if(k == 939){
+        printf("Here!! %f ::: %f \n", max_fft_value, local_in[85].x);
+    }
+
     out[index].x = (float) k;
     out[index].y = 0.0f;
 
