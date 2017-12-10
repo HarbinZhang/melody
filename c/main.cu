@@ -76,7 +76,7 @@ int main(int argc, char ** argv) {
     fclose(wavFile);
 
 
-    int blockSize = wavHeader.Subchunk2Size/SIGNAL_SIZE/2048 + 1;
+    // int blockSize = wavHeader.Subchunk2Size/SIGNAL_SIZE/2048 + 1;
 
     printf("[simpleCUFFT] is starting...\n");
     // Allocate host memory for the signal
@@ -86,7 +86,6 @@ int main(int argc, char ** argv) {
     // memcpy(h_signal, &data_array[0], SIGNAL_SIZE);
     for(int i = 0; i < wavHeader.Subchunk2Size/2; i++){
         h_signal[i].x = (float) data_array[i];
-        // h_signal[i].x=100000;
         h_signal[i].y = 0.0f;
     }
 
@@ -117,7 +116,7 @@ int main(int argc, char ** argv) {
     cufftResult res = cufftPlanMany(&plan, 1, n,
         NULL, 1, SIGNAL_SIZE,  //advanced data layout, NULL shuts it off
         NULL, 1, SIGNAL_SIZE,  //advanced data layout, NULL shuts it off
-        CUFFT_C2C, 2);    
+        CUFFT_C2C, 1);    
 
 
     // all_in<<<blockSize, SIGNAL_SIZE>>>(g_signal, g_out);
