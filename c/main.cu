@@ -80,7 +80,6 @@ int main(int argc, char ** argv) {
 
     printf("[simpleCUFFT] is starting...\n");
     // Allocate host memory for the signal
-    // cufftComplex* h_signal = (cufftComplex*)malloc(sizeof(cufftComplex) * SIGNAL_SIZE);
     cufftComplex* h_signal = (cufftComplex*) malloc(sizeof(cufftComplex) * wavHeader.Subchunk2Size/2);
 
     // memcpy(h_signal, &data_array[0], SIGNAL_SIZE);
@@ -90,23 +89,19 @@ int main(int argc, char ** argv) {
         h_signal[i].y = 0.0f;
     }
 
-    // for(int i = 0; i < SIGNAL_SIZE; i++){
-    //     printf("%f\n", h_signal[i].x);
-    // }
-
     // Initalize the memory for the signal
     int mem_size = sizeof(cufftComplex) * wavHeader.Subchunk2Size/2;
 
     // Allocate device memory for signal
     cufftComplex* g_signal;
     cudaMalloc((void**)&g_signal, mem_size);
+
     // Copy host memory to device
     cudaMemcpy(g_signal, h_signal, mem_size,
                cudaMemcpyHostToDevice);
 
     cufftComplex* g_fft_out;
     cudaMalloc((void**)&g_fft_out, sizeof(cufftComplex) * wavHeader.Subchunk2Size/2);
-
 
 
     // CUFFT plan
@@ -226,9 +221,9 @@ __global__ void all_in(cufftComplex* in, cufftComplex* out){
         }
     }
 
-    float freq = k * 48000/SIGNAL_SIZE;
+    // float freq = (k+1) * 48000.0f/(float)SIGNAL_SIZE;
 
-    out[index].x = freq;
+    out[index].x = k;
     out[index].y = 0.0f;
 
 }
