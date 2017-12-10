@@ -30,11 +30,11 @@ int main()
         cufftHandle plan;
         // cufftPlan1d(&plan,SIGNAL_SIZE,CUFFT_C2C,1);
 
-        int n[1] = {4};
+        int n[1] = {2};
         cufftResult res = cufftPlanMany(&plan, 1, n,
         NULL, 1, SIGNAL_SIZE,  //advanced data layout, NULL shuts it off
         NULL, 1, SIGNAL_SIZE,  //advanced data layout, NULL shuts it off
-        CUFFT_C2C, 2);    
+        CUFFT_C2C, 3);    
 
         
         //Transform signal 

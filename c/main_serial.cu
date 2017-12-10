@@ -116,8 +116,8 @@ int main(int argc, char ** argv) {
 
 
     // CUFFT plan
-    // cufftHandle plan;
-    // cufftPlan1d(&plan, SIGNAL_SIZE, CUFFT_C2C, 1);
+    cufftHandle plan;
+    cufftPlan1d(&plan, SIGNAL_SIZE, CUFFT_C2C, 1);
 
     // Transform signal and kernel
     // printf("Transforming signal cufftExecC2C\n");
@@ -202,6 +202,8 @@ __global__ void all_in(cufftComplex* in, cufftComplex* out){
     cufftPlan1d(&plan, SIGNAL_SIZE, CUFFT_C2C, 1);
 
     // cufftResult err = cufftExecC2C(plan, (cufftComplex *)in[SIGNAL_SIZE*index:SIGNAL_SIZE*(index+1)-1], (cufftComplex *)g_out, CUFFT_FORWARD);    
+
+    
     cufftResult err = cufftExecC2C(plan, (cufftComplex *)&local_in, (cufftComplex *)&local_out, CUFFT_FORWARD);    
 
 
