@@ -123,7 +123,7 @@ int main(int argc, char ** argv) {
     cudaMalloc((void**)&g_fft_max_out, sizeof(cufftComplex) * (wavHeader.Subchunk2Size/2/SIGNAL_SIZE + 1));
 
     int blockSize = wavHeader.Subchunk2Size/SIGNAL_SIZE/2048 + 1;
-    all_in<<<blockSize, 12>>>(g_fft_out, g_fft_max_out);
+    all_in<<<blockSize, wavHeader.Subchunk2Size/2/SIGNAL_SIZE-1>>>(g_fft_out, g_fft_max_out);
     
 
     // cuda mem copy to host
@@ -198,6 +198,8 @@ __global__ void all_in(cufftComplex* in, cufftComplex* out){
     }
 
     // float freq = (k+1) * 48000.0f/(float)SIGNAL_SIZE;
+    if(k == 939){
+        printf("Here ! : %f   ::::   %f\n", max_fft_value, local_in[85].x);}
 
     out[index].x = (float) k;
     out[index].y = 0.0f;
