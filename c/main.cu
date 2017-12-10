@@ -125,7 +125,7 @@ int main(int argc, char ** argv) {
     cudaMalloc((void**)&g_fft_max_out, sizeof(cufftComplex) * (wavHeader.Subchunk2Size/2/SIGNAL_SIZE + 1));
 
     int blockSize = wavHeader.Subchunk2Size/SIGNAL_SIZE/2048 + 1;
-    all_in<<<blockSize, 11>>>(g_fft_out, g_fft_max_out, wavHeader.SamplesPerSec);
+    all_in<<<blockSize, wavHeader.Subchunk2Size/2/SIGNAL_SIZE-1>>>(g_fft_out, g_fft_max_out, wavHeader.SamplesPerSec);
     
 
     // cuda mem copy to host
