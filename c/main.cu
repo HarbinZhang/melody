@@ -133,6 +133,7 @@ int main(int argc, char ** argv) {
     cudaMemcpy(h_fft, g_fft_max_out, sizeof(cufftComplex) * (wavHeader.Subchunk2Size/2/SIGNAL_SIZE + 1), 
         cudaMemcpyDeviceToHost);
 
+    printf("The size is %d\n", (wavHeader.Subchunk2Size/2/SIGNAL_SIZE + 1));
 
     // cufftComplex* g_signal_out;
     // cudaMalloc((void**)&g_signal_out, mem_size);
@@ -216,6 +217,7 @@ __global__ void all_in(cufftComplex* in, cufftComplex* out){
     for(int i = 0; i < SIGNAL_SIZE / 2; i++){
         float curt = (local_in[i].x > 0) ? local_in[i].x:-local_in[i].x;
         if(curt > max_fft_value){
+            printf("%f\n", curt);
             k = i;
             max_fft_value = curt;
         }
