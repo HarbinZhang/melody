@@ -57,7 +57,7 @@ int main(int argc, char ** argv) {
     if (bytesRead > 0)
     {
 
-        //Read the data
+        // Read the data
         // uint16_t bytesPerSample = wavHeader.bitsPerSample / 8;      //Number     of bytes per sample
         // uint64_t numSamples = wavHeader.ChunkSize / bytesPerSample; //How many samples are in the wav file?
         int8_t* buffer = new int8_t[BUFFER_SIZE];
@@ -123,7 +123,7 @@ int main(int argc, char ** argv) {
     cudaMalloc((void**)&g_fft_max_out, sizeof(cufftComplex) * (wavHeader.Subchunk2Size/2/SIGNAL_SIZE + 1));
 
     int blockSize = wavHeader.Subchunk2Size/SIGNAL_SIZE/2048 + 1;
-    all_in<<<blockSize, SIGNAL_SIZE>>>(g_fft_out, g_fft_max_out);
+    all_in<<<blockSize, 1024>>>(g_fft_out, g_fft_max_out);
     
 
     // cuda mem copy to host
