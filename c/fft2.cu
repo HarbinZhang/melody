@@ -32,9 +32,9 @@ int main()
 
         int n[1] = {2};
         cufftResult res = cufftPlanMany(&plan, 1, n,
+        NULL, 2, SIGNAL_SIZE,  //advanced data layout, NULL shuts it off
         NULL, 1, SIGNAL_SIZE,  //advanced data layout, NULL shuts it off
-        NULL, 1, SIGNAL_SIZE,  //advanced data layout, NULL shuts it off
-        CUFFT_C2C, 3);    
+        CUFFT_C2C, 2);    
 
         
         //Transform signal 
