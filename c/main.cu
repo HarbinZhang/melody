@@ -116,7 +116,7 @@ int main(int argc, char ** argv) {
     int n[1] = {SIGNAL_SIZE};
     cufftResult res = cufftPlanMany(&plan, 1, n,
         NULL, 1, SIGNAL_SIZE,  //advanced data layout, NULL shuts it off
-        NULL, 1, SIGNAL_SIZE,  //advanced data layout, NULL shuts it off
+        NULL, 1, SIGNAL_SIZE/2,  //advanced data layout, NULL shuts it off
         // CUFFT_C2C, wavHeader.Subchunk2Size/2/SIGNAL_SIZE);    
         CUFFT_C2C, 3);
 
