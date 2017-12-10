@@ -193,43 +193,43 @@ int getFileSize(FILE* inFile)
 
 
 
-__global__ void all_in(cufftComplex* in, cufftComplex* out){
-    int index = threadIdx.x + blockIdx.x * 1024;
+// __global__ void all_in(cufftComplex* in, cufftComplex* out){
+//     int index = threadIdx.x + blockIdx.x * 1024;
 
-    // copy to local memory
+//     // copy to local memory
 
-    // here: optimized
-    cufftComplex local_in[SIGNAL_SIZE];
-    cufftComplex local_out[SIGNAL_SIZE];
+//     // here: optimized
+//     cufftComplex local_in[SIGNAL_SIZE];
+//     cufftComplex local_out[SIGNAL_SIZE];
 
-    for(int i = 0; i < SIGNAL_SIZE; i++){
-        local_in[i] = in[i+index*SIGNAL_SIZE];
-    }
+//     for(int i = 0; i < SIGNAL_SIZE; i++){
+//         local_in[i] = in[i+index*SIGNAL_SIZE];
+//     }
 
-    cufftHandle plan;
-    cufftPlan1d(&plan, SIGNAL_SIZE, CUFFT_C2C, 1);
+//     cufftHandle plan;
+//     cufftPlan1d(&plan, SIGNAL_SIZE, CUFFT_C2C, 1);
 
-    // cufftResult err = cufftExecC2C(plan, (cufftComplex *)in[SIGNAL_SIZE*index:SIGNAL_SIZE*(index+1)-1], (cufftComplex *)g_out, CUFFT_FORWARD);    
-    cufftResult err = cufftExecC2C(plan, (cufftComplex *)&local_in, (cufftComplex *)&local_out, CUFFT_FORWARD);    
+//     // cufftResult err = cufftExecC2C(plan, (cufftComplex *)in[SIGNAL_SIZE*index:SIGNAL_SIZE*(index+1)-1], (cufftComplex *)g_out, CUFFT_FORWARD);    
+//     cufftResult err = cufftExecC2C(plan, (cufftComplex *)&local_in, (cufftComplex *)&local_out, CUFFT_FORWARD);    
 
 
-    // get biggest FFT
-    int k = 0;
-    float max_fft_value = (local_out[k].x > 0) ? local_out[k].x:-local_out[k].x;
-    for(int i = 0; i < SIGNAL_SIZE / 2; i++){
-        float curt = (local_out[i].x > 0) ? local_out[i].x:-local_out[i].x;
-        if(curt > max_fft_value){
-            k = i;
-            max_fft_value = curt;
-        }
-    }
+//     // get biggest FFT
+//     int k = 0;
+//     float max_fft_value = (local_out[k].x > 0) ? local_out[k].x:-local_out[k].x;
+//     for(int i = 0; i < SIGNAL_SIZE / 2; i++){
+//         float curt = (local_out[i].x > 0) ? local_out[i].x:-local_out[i].x;
+//         if(curt > max_fft_value){
+//             k = i;
+//             max_fft_value = curt;
+//         }
+//     }
 
-    float freq = k * 48000/SIGNAL_SIZE;
+//     float freq = k * 48000/SIGNAL_SIZE;
 
-    out[index].x = freq;
-    out[index].y = 0.0f;
+//     out[index].x = freq;
+//     out[index].y = 0.0f;
 
-    cufftDestroy(plan);
+//     cufftDestroy(plan);
 
-}
+// }
 
