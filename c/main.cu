@@ -157,18 +157,12 @@ int main(int argc, char ** argv) {
         printf("fft[%d]: %f\n", i, h_fft[i].x);
     }
 
-    // printf("%s\n", "from here hi!");
-
-    // for(int i = 0; i < SIGNAL_SIZE; i++){
-    //     printf("fft[%d]: %f\n", i, h_out[i].x);
-    // }
 
     auto end = std::chrono::system_clock::now();
     std::chrono::duration<double> elapsed_seconds = end-start;
     printf("Time using in CPU is : %f\n", elapsed_seconds);
     // printf("Error info: %s\n", err);
 
-    
 
     free(h_signal);
     free(h_fft);
@@ -183,6 +177,7 @@ int main(int argc, char ** argv) {
     return 0;
 }
 
+
 // find the file size
 int getFileSize(FILE* inFile)
 {
@@ -196,8 +191,6 @@ int getFileSize(FILE* inFile)
 }
 
 
-
-
 __global__ void all_in(cufftComplex* in, cufftComplex* out){
     int index = threadIdx.x + blockIdx.x * 1024;
 
@@ -205,7 +198,6 @@ __global__ void all_in(cufftComplex* in, cufftComplex* out){
 
     // here: optimized
     cufftComplex local_in[SIGNAL_SIZE];
-    // cufftComplex local_in[SIGNAL_SIZE];
 
     for(int i = 0; i < SIGNAL_SIZE; i++){
         local_in[i] = in[i+index*SIGNAL_SIZE];
@@ -226,7 +218,7 @@ __global__ void all_in(cufftComplex* in, cufftComplex* out){
 
     // float freq = (k+1) * 48000.0f/(float)SIGNAL_SIZE;
 
-    out[index].x = k;
+    out[index].x = (float) k;
     out[index].y = 0.0f;
 
 }
