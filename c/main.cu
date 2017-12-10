@@ -32,7 +32,7 @@ typedef struct  WAV_HEADER
 } wav_hdr;
 int getFileSize(FILE* inFile);
 
-__global__ void all_in(cufftComplex* in, cufftComplex* out);
+__global__ void all_in(cufftComplex* in, cufftComplex* out, int rate);
 
 int main(int argc, char ** argv) {
     wav_hdr wavHeader;
@@ -125,7 +125,7 @@ int main(int argc, char ** argv) {
     cudaMalloc((void**)&g_fft_max_out, sizeof(cufftComplex) * (wavHeader.Subchunk2Size/2/SIGNAL_SIZE + 1));
 
     int blockSize = wavHeader.Subchunk2Size/SIGNAL_SIZE/2048 + 1;
-    all_in<<<blockSize, 11>>>(g_fft_out, g_fft_max_out, wavHeader.SamplesPerSe);
+    all_in<<<blockSize, 11>>>(g_fft_out, g_fft_max_out, wavHeader.SamplesPerSec);
     
 
     // cuda mem copy to host
