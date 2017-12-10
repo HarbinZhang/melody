@@ -120,12 +120,15 @@ int main(int argc, char ** argv) {
     cufftPlan1d(&plan, SIGNAL_SIZE, CUFFT_C2C, 1);
 
     // Transform signal and kernel
-    // printf("Transforming signal cufftExecC2C\n");
-    // cufftResult err = cufftExecC2C(plan, (cufftComplex *)g_signal, (cufftComplex *)g_out, CUFFT_FORWARD);    
+    printf("Transforming signal cufftExecC2C\n");
+    cufftResult err = cufftExecC2C(plan, (cufftComplex *)g_signal, (cufftComplex *)g_out, CUFFT_FORWARD);    
+
+
+    // handle the fft
+    unit_in<<<1,1>>>()
 
 
     // cuda mem copy to host
-    
     cudaMemcpy(h_fft, g_out, sizeof(cufftComplex) * wavHeader.Subchunk2Size/2/SIGNAL_SIZE, 
         cudaMemcpyDeviceToHost);
 
@@ -185,7 +188,7 @@ int getFileSize(FILE* inFile)
 
 
 
-__global__ void all_in(cufftComplex* in, cufftComplex* out){
+__global__ void unit_in(cufftComplex* in, cufftComplex* out){
     int index = threadIdx.x + blockIdx.x * 1024;
 
     // copy to local memory
