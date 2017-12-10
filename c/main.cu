@@ -85,8 +85,8 @@ int main(int argc, char ** argv) {
 
     // memcpy(h_signal, &data_array[0], SIGNAL_SIZE);
     for(int i = 0; i < wavHeader.Subchunk2Size/2; i++){
-        // h_signal[i].x = (float) data_array[i];
-        h_signal[i].x = 1.0f;
+        h_signal[i].x = (float) data_array[i];
+        // h_signal[i].x = 1.0f;
         h_signal[i].y = 0.0f;
     }
 
