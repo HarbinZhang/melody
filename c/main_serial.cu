@@ -95,7 +95,7 @@ int main(int argc, char ** argv) {
     // }
 
     // Initalize the memory for the signal
-    int mem_size = sizeof(cufftComplex) * wavHeader.Subchunk2Size/2;
+    int mem_size = sizeof(cufftComplex) * SIGNAL_SIZE;
 
     // Allocate device memory for signal
     cufftComplex* g_signal;

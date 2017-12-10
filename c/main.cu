@@ -150,7 +150,7 @@ int main(int argc, char ** argv) {
     // cudaMemcpy(h_out, g_signal, mem_size, cudaMemcpyDeviceToHost);
 
 
-    for(int i = (wavHeader.Subchunk2Size/2-1)*SIGNAL_SIZE; i < (wavHeader.Subchunk2Size/2)*SIGNAL_SIZE; i++){
+    for(int i = (wavHeader.Subchunk2Size/2 - SIGNAL_SIZE); i < (wavHeader.Subchunk2Size/2); i++){
         printf("fft[%d]: %f\n", i, h_fft[i].x);
     }
 
