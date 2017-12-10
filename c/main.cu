@@ -153,7 +153,7 @@ int main(int argc, char ** argv) {
     // }
 
 
-    for(int i = 0; i < 24; i++){
+    for(int i = 0; i <= wavHeader.Subchunk2Size/2/SIGNAL_SIZE; i++){
         printf("fft[%d]: %f\n", i, h_fft[i].x);
     }
 
@@ -214,6 +214,7 @@ __global__ void all_in(cufftComplex* in, cufftComplex* out){
     // get biggest FFT
     int k = 0;
     float max_fft_value = (local_in[k].x > 0) ? local_in[k].x:-local_in[k].x;
+    printf("%f\n", max_fft_value);
     for(int i = 0; i < SIGNAL_SIZE / 2; i++){
         float curt = (local_in[i].x > 0) ? local_in[i].x:-local_in[i].x;
         if(curt > max_fft_value){
