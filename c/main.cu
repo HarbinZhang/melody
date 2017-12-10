@@ -109,7 +109,7 @@ int main(int argc, char ** argv) {
     cufftResult res = cufftPlanMany(&plan, 1, n,
         NULL, 1, SIGNAL_SIZE,  //advanced data layout, NULL shuts it off
         NULL, 1, SIGNAL_SIZE,  //advanced data layout, NULL shuts it off
-        CUFFT_C2C, wavHeader.Subchunk2Size/2/SIGNAL_SIZE);    
+        CUFFT_C2C, wavHeader.Subchunk2Size/2/SIGNAL_SIZE-1);    
         // CUFFT_C2C, 3);
 
 
@@ -123,7 +123,7 @@ int main(int argc, char ** argv) {
     cudaMalloc((void**)&g_fft_max_out, sizeof(cufftComplex) * (wavHeader.Subchunk2Size/2/SIGNAL_SIZE + 1));
 
     int blockSize = wavHeader.Subchunk2Size/SIGNAL_SIZE/2048 + 1;
-    all_in<<<blockSize, 12>>>(g_fft_out, g_fft_max_out);
+    all_in<<<blockSize, 11>>>(g_fft_out, g_fft_max_out);
     
 
     // cuda mem copy to host
@@ -206,11 +206,11 @@ __global__ void all_in(cufftComplex* in, cufftComplex* out){
     // get biggest FFT
     int k = 0;
     float max_fft_value = (local_in[k].x > 0) ? local_in[k].x:-local_in[k].x;
-    printf("%f\n", max_fft_value);
+    // printf("%f\n", max_fft_value);
     for(int i = 0; i < SIGNAL_SIZE / 2; i++){
         float curt = (local_in[i].x > 0) ? local_in[i].x:-local_in[i].x;
         if(curt > max_fft_value){
-            printf("%f\n", curt);
+            // printf("%f\n", curt);
             k = i;
             max_fft_value = curt;
         }
