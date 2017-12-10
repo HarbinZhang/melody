@@ -3,7 +3,7 @@
 #include<cufft.h>
 #include<iostream>
 using namespace std;
-#define SIGNAL_SIZE 8
+#define SIGNAL_SIZE 16
 typedef unsigned int uint32;
 typedef unsigned long int uint64;
 
@@ -30,11 +30,11 @@ int main()
         cufftHandle plan;
         // cufftPlan1d(&plan,SIGNAL_SIZE,CUFFT_C2C,1);
 
-        int n[1] = {2};
+        int n[1] = {3};
         cufftResult res = cufftPlanMany(&plan, 1, n,
         NULL, 1, 4,  //advanced data layout, NULL shuts it off
         NULL, 1, 4,  //advanced data layout, NULL shuts it off
-        CUFFT_C2C, 3);    
+        CUFFT_C2C, 4);    
 
         
         //Transform signal 
