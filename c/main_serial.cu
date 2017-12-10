@@ -9,7 +9,7 @@
 // cufftComplex data type
 // typedef float2 cufftComplex;
 
-#define SIGNAL_SIZE 4096
+#define SIGNAL_SIZE 4000
 
 typedef struct  WAV_HEADER
 {
@@ -105,22 +105,15 @@ int main(int argc, char ** argv) {
                cudaMemcpyHostToDevice);
 
     cufftComplex* g_out;
-    cudaMalloc((void**)&g_out, sizeof(cufftComplex) * wavHeader.Subchunk2Size/2);
+    cudaMalloc((void**)&g_out, sizeof(cufftComplex) * wavHeader.Subchunk2Size/2/SIGNAL_SIZE);
 
     cufftComplex* h_fft;
-    h_fft = (cufftComplex*) malloc(sizeof(cufftComplex) * wavHeader.Subchunk2Size/2);
+    h_fft = (cufftComplex*) malloc(sizeof(cufftComplex) * wavHeader.Subchunk2Size/2/SIGNAL_SIZE);
 
 
-    // CUFFT plan
-    cufftHandle plan;
-    int n[1] = {SIGNAL_SIZE};
-    cufftResult res = cufftPlanMany(&plan, 1, n,
-        NULL, 1, SIGNAL_SIZE,  //advanced data layout, NULL shuts it off
-        NULL, 1, SIGNAL_SIZE,  //advanced data layout, NULL shuts it off
-        CUFFT_C2C, 2);    
 
 
-    // all_in<<<blockSize, SIGNAL_SIZE>>>(g_signal, g_out);
+    all_in<<<blockSize, SIGNAL_SIZE>>>(g_signal, g_out);
 
 
     // CUFFT plan
@@ -129,7 +122,7 @@ int main(int argc, char ** argv) {
 
     // Transform signal and kernel
     // printf("Transforming signal cufftExecC2C\n");
-    cufftResult err = cufftExecC2C(plan, (cufftComplex *)g_signal, (cufftComplex *)g_out, CUFFT_FORWARD);    
+    // cufftResult err = cufftExecC2C(plan, (cufftComplex *)g_signal, (cufftComplex *)g_out, CUFFT_FORWARD);    
 
 
     // cuda mem copy to host
