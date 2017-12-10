@@ -113,7 +113,6 @@ int main(int argc, char ** argv) {
 
 
 
-    all_in<<<blockSize, SIGNAL_SIZE>>>(g_signal, g_out);
 
 
     // CUFFT plan

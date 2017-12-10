@@ -28,7 +28,14 @@ int main()
 
         //CUFFT plan
         cufftHandle plan;
-        cufftPlan1d(&plan,SIGNAL_SIZE,CUFFT_C2C,1);
+        // cufftPlan1d(&plan,SIGNAL_SIZE,CUFFT_C2C,1);
+
+        int n[1] = {4};
+        cufftResult res = cufftPlanMany(&plan, 1, n,
+        NULL, 1, SIGNAL_SIZE,  //advanced data layout, NULL shuts it off
+        NULL, 1, SIGNAL_SIZE,  //advanced data layout, NULL shuts it off
+        CUFFT_C2C, 2);    
+
         
         //Transform signal 
         cufftExecC2C(plan,(cufftComplex *)d_signal,(cufftComplex *)d_signal,CUFFT_FORWARD);
