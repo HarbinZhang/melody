@@ -103,7 +103,6 @@ int main(int argc, char ** argv) {
     cufftComplex* g_fft_out;
     cudaMalloc((void**)&g_fft_out, sizeof(cufftComplex) * wavHeader.Subchunk2Size/2);
 
-
     // CUFFT plan
     cufftHandle plan;
     int n[1] = {SIGNAL_SIZE};
@@ -119,7 +118,7 @@ int main(int argc, char ** argv) {
     cufftResult err = cufftExecC2C(plan, (cufftComplex *)g_signal, (cufftComplex *)g_fft_out, CUFFT_FORWARD);    
 
 
-    
+    // find max fft in fft results.
     cufftComplex* g_fft_max_out;
     cudaMalloc((void**)&g_fft_max_out, sizeof(cufftComplex) * (wavHeader.Subchunk2Size/2/SIGNAL_SIZE + 1));
 
@@ -131,7 +130,7 @@ int main(int argc, char ** argv) {
     cufftComplex* h_fft;
     h_fft = (cufftComplex*) malloc(sizeof(cufftComplex) * (wavHeader.Subchunk2Size/2/SIGNAL_SIZE + 1));
 
-    cudaMemcpy(h_fft, g_fft_out, sizeof(cufftComplex) * (wavHeader.Subchunk2Size/2/SIGNAL_SIZE + 1), 
+    cudaMemcpy(h_fft, g_fft_max_out, sizeof(cufftComplex) * (wavHeader.Subchunk2Size/2/SIGNAL_SIZE + 1), 
         cudaMemcpyDeviceToHost);
 
 
@@ -177,6 +176,7 @@ int main(int argc, char ** argv) {
     cufftDestroy(plan);
     cudaFree(g_signal);
     cudaFree(g_fft_out);
+    cudaFree(g_fft_max_out);
     // cudaFree(g_signal_out);
 
     return 0;
