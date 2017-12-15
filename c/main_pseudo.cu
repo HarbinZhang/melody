@@ -10,7 +10,7 @@
 // typedef float2 cufftComplex;
 
 #define SIGNAL_SIZE 4096
-#define RR 10800
+#define RR 1
 
 typedef struct  WAV_HEADER
 {
