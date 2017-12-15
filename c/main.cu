@@ -221,6 +221,7 @@ __global__ void init(cufftComplex *g)
     int m = i + blockIdx.z * SIGNAL_SIZE;
     int n = j + blockIdx.y * SIGNAL_SIZE;
 
-    g[j] = sinf(m*m + n);
+    g[j].x = sinf(m*m + n);
+    g[j].y = 0.0f;
     __syncthreads();
 }
