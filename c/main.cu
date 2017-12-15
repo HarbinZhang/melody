@@ -9,7 +9,7 @@
 // cufftComplex data type
 // typedef float2 cufftComplex;
 
-#define SIGNAL_SIZE 4096
+#define SIGNAL_SIZE 8192
 
 typedef struct  WAV_HEADER
 {
