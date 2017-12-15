@@ -119,15 +119,19 @@ int main(int argc, char ** argv) {
     // Transform signal and kernel
     // printf("Transforming signal cufftExecC2C\n");
 
+    cufftComplex* g_fft_max_out;
+    cudaMalloc((void**)&g_fft_max_out, sizeof(cufftComplex) * (wavHeader.Subchunk2Size/2/SIGNAL_SIZE + 1));
+    
+    int blockSize;
+
     for(int i = 0; i < RR; i++ ){
         cufftResult err = cufftExecC2C(plan, (cufftComplex *)g_signal, (cufftComplex *)g_fft_out, CUFFT_FORWARD);    
 
 
         // find max fft in fft results.
-        cufftComplex* g_fft_max_out;
-        cudaMalloc((void**)&g_fft_max_out, sizeof(cufftComplex) * (wavHeader.Subchunk2Size/2/SIGNAL_SIZE + 1));
+        
 
-        int blockSize = wavHeader.Subchunk2Size/SIGNAL_SIZE/2048 + 1;
+        blockSize = wavHeader.Subchunk2Size/SIGNAL_SIZE/2048 + 1;
         all_in<<<blockSize, wavHeader.Subchunk2Size/2/SIGNAL_SIZE-1>>>(g_fft_out, g_fft_max_out, wavHeader.SamplesPerSec);
     }
 
