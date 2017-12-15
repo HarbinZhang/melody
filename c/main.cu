@@ -146,7 +146,7 @@ int main(int argc, char ** argv) {
 
     init<<<blockSize, wavHeader.Subchunk2Size/2/SIGNAL_SIZE-1>>>(g_fft_max_out);
 
-    cufftResult err = cufftExecC2C(plan, (cufftComplex *)g_fft_out, (cufftComplex *)g_signal, CUFFT_INVERSE);    
+    err = cufftExecC2C(plan, (cufftComplex *)g_fft_out, (cufftComplex *)g_signal, CUFFT_INVERSE);    
 
 
 
