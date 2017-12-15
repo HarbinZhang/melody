@@ -91,7 +91,7 @@ int main(int argc, char ** argv) {
     }
 
 
-    auto start = std::chrono::system_clock::now();
+    
     // Initalize the memory for the signal
     int mem_size = sizeof(cufftComplex) * wavHeader.Subchunk2Size/2;
 
@@ -100,8 +100,8 @@ int main(int argc, char ** argv) {
     cudaMalloc((void**)&g_signal, mem_size);
 
     // Copy host memory to device
-    cudaMemcpy(g_signal, h_signal, mem_size,
-               cudaMemcpyHostToDevice);
+    // cudaMemcpy(g_signal, h_signal, mem_size,
+    //            cudaMemcpyHostToDevice);
 
     cufftComplex* g_fft_out;
     cudaMalloc((void**)&g_fft_out, sizeof(cufftComplex) * wavHeader.Subchunk2Size/2);
@@ -121,26 +121,36 @@ int main(int argc, char ** argv) {
 
     cufftComplex* g_fft_max_out;
     cudaMalloc((void**)&g_fft_max_out, sizeof(cufftComplex) * (wavHeader.Subchunk2Size/2/SIGNAL_SIZE + 1));
-    
+
     int blockSize;
 
+
+    cufftComplex* h_fft;
+    
+    auto start = std::chrono::system_clock::now();
     for(int i = 0; i < RR; i++ ){
+
+        cudaMemcpy(g_signal, h_signal, mem_size,
+           cudaMemcpyHostToDevice);
+
         cufftResult err = cufftExecC2C(plan, (cufftComplex *)g_signal, (cufftComplex *)g_fft_out, CUFFT_FORWARD);    
-
-
         // find max fft in fft results.
-        
-
         blockSize = wavHeader.Subchunk2Size/SIGNAL_SIZE/2048 + 1;
         all_in<<<blockSize, wavHeader.Subchunk2Size/2/SIGNAL_SIZE-1>>>(g_fft_out, g_fft_max_out, wavHeader.SamplesPerSec);
+
+        h_fft = (cufftComplex*) malloc(sizeof(cufftComplex) * (wavHeader.Subchunk2Size/2/SIGNAL_SIZE + 1));
+
+        cudaMemcpy(h_fft, g_fft_max_out, sizeof(cufftComplex) * (wavHeader.Subchunk2Size/2/SIGNAL_SIZE + 1), 
+        cudaMemcpyDeviceToHost);
+
     }
 
     // cuda mem copy to host
     cufftComplex* h_fft;
-    h_fft = (cufftComplex*) malloc(sizeof(cufftComplex) * (wavHeader.Subchunk2Size/2/SIGNAL_SIZE + 1));
+    // h_fft = (cufftComplex*) malloc(sizeof(cufftComplex) * (wavHeader.Subchunk2Size/2/SIGNAL_SIZE + 1));
 
-    cudaMemcpy(h_fft, g_fft_max_out, sizeof(cufftComplex) * (wavHeader.Subchunk2Size/2/SIGNAL_SIZE + 1), 
-        cudaMemcpyDeviceToHost);
+    // cudaMemcpy(h_fft, g_fft_max_out, sizeof(cufftComplex) * (wavHeader.Subchunk2Size/2/SIGNAL_SIZE + 1), 
+        // cudaMemcpyDeviceToHost);
 
     printf("The size is %d\n", (wavHeader.Subchunk2Size/2/SIGNAL_SIZE + 1));
 
