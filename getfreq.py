@@ -25,7 +25,7 @@ data = np.array(data)
 # for i in range(3000):
 # 	print data[i]
 
-data_fft = np.fft.fft(data[1:4800])
+data_fft = np.fft.fft(data[4096:4096*2-1])
 
 frequencies = np.abs(data_fft)
 
