@@ -143,8 +143,6 @@ int main(int argc, char ** argv) {
     }
 
 
-    init<<<blockSize, wavHeader.Subchunk2Size/2/SIGNAL_SIZE-1>>>(g_fft_max_out);
-
     auto end = std::chrono::system_clock::now();
     std::chrono::duration<double> elapsed_seconds = end-start;
     printf("Time using in CPU is : %f\n", elapsed_seconds);
@@ -212,14 +210,3 @@ __global__ void all_in(cufftComplex* in, cufftComplex* out, int rate){
 
 }
 
-__global__ void init(cufftComplex *g)
-{
-    int i = blockIdx.x;
-    int j = threadIdx.x;
-
-    int m = i + blockIdx.z * ARRAY_SIZE;
-    int n = j + blockIdx.y * ARRAY_SIZE;
-
-    g[m * ARRAY_SIZE * X + n] = sinf(m*m + n);
-    __syncthreads();
-}
