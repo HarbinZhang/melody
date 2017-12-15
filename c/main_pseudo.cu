@@ -107,13 +107,18 @@ int main(int argc, char ** argv) {
     cudaMalloc((void**)&g_fft_out, sizeof(cufftComplex) * wavHeader.Subchunk2Size/2);
 
     // CUFFT plan
-    cufftHandle plan;
-    int n[1] = {SIGNAL_SIZE};
-    cufftResult res = cufftPlanMany(&plan, 1, n,
-        NULL, 1, SIGNAL_SIZE,  //advanced data layout, NULL shuts it off
-        NULL, 1, SIGNAL_SIZE,  //advanced data layout, NULL shuts it off
-        CUFFT_C2C, 1);    
+    // cufftHandle plan;
+    // int n[1] = {SIGNAL_SIZE};
+    // cufftResult res = cufftPlanMany(&plan, 1, n,
+    //     NULL, 1, SIGNAL_SIZE,  //advanced data layout, NULL shuts it off
+    //     NULL, 1, SIGNAL_SIZE,  //advanced data layout, NULL shuts it off
+    //     CUFFT_C2C, 1); 
+
         // CUFFT_C2C, 3);
+
+    cufftHandle plan;
+    cufftPlan1d(&plan, SIGNAL_SIZE, CUFFT_C2C, 1);
+
 
 
     // Transform signal and kernel
@@ -126,14 +131,14 @@ int main(int argc, char ** argv) {
 
 
     cufftComplex* h_fft;
-    
+
     auto start = std::chrono::system_clock::now();
     for(int i = 0; i < RR; i++ ){
 
         cudaMemcpy(g_signal, h_signal, mem_size,
            cudaMemcpyHostToDevice);
 
-        cufftResult err = cufftExecC2C(plan, (cufftComplex *)g_signal, (cufftComplex *)g_fft_out, CUFFT_FORWARD);    
+        cufftResult err = cufftExecC2C(plan, (cufftComplex *) (g_signal + i), (cufftComplex *) (g_fft_out + i), CUFFT_FORWARD);    
         // find max fft in fft results.
         blockSize = wavHeader.Subchunk2Size/SIGNAL_SIZE/2048 + 1;
         all_in<<<blockSize, wavHeader.Subchunk2Size/2/SIGNAL_SIZE-1>>>(g_fft_out, g_fft_max_out, wavHeader.SamplesPerSec);
