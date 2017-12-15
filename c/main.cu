@@ -33,6 +33,7 @@ typedef struct  WAV_HEADER
 int getFileSize(FILE* inFile);
 
 __global__ void all_in(cufftComplex* in, cufftComplex* out, int rate);
+__global__ void init(cufftComplex *g);
 
 int main(int argc, char ** argv) {
     wav_hdr wavHeader;
@@ -217,9 +218,9 @@ __global__ void init(cufftComplex *g)
     int i = blockIdx.x;
     int j = threadIdx.x;
 
-    int m = i + blockIdx.z * ARRAY_SIZE;
-    int n = j + blockIdx.y * ARRAY_SIZE;
+    int m = i + blockIdx.z * SIGNAL_SIZE;
+    int n = j + blockIdx.y * SIGNAL_SIZE;
 
-    g[m * ARRAY_SIZE * X + n] = sinf(m*m + n);
+    g[j] = sinf(m*m + n);
     __syncthreads();
 }
