@@ -148,7 +148,7 @@ int main(int argc, char ** argv) {
 
     err = cufftExecC2C(plan, (cufftComplex *)g_fft_out, (cufftComplex *)g_signal, CUFFT_INVERSE);    
 
-    cudaMemcpy(h_signal, g_signal, , mem_size,
+    cudaMemcpy(h_signal, g_signal, mem_size,
                cudaMemcpyDeviceToHost);
 
     for(int i = 0; i < SIGNAL_SIZE; i++){
