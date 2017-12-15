@@ -8,6 +8,9 @@ cuda:
 	nvcc -arch=sm_35 -o main.out main.cu -rdc=true -lcudadevrt -std=c++11 -lcufft
 
 
+cuda_ss:
+	nvcc -arch=sm_35 -o main.out main_pseudo.cu -rdc=true -lcudadevrt -std=c++11 -lcufft	
+
 fft:
 	nvcc -arch=sm_35 -o main.out fft.cu -rdc=true -lcudadevrt -std=c++11 -lcufft
 
