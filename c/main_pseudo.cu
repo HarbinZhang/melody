@@ -168,7 +168,7 @@ int main(int argc, char ** argv) {
     auto end = std::chrono::system_clock::now();
     std::chrono::duration<double> elapsed_seconds = end-start;
     printf("Time using in CPU is : %f\n", elapsed_seconds);
-
+    printf("This is from pseudo\n");
 
     free(h_signal);
     free(h_fft);
