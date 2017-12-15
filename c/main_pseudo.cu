@@ -146,7 +146,7 @@ int main(int argc, char ** argv) {
     }
 
     // cuda mem copy to host
-    cufftComplex* h_fft;
+    // cufftComplex* h_fft;
     // h_fft = (cufftComplex*) malloc(sizeof(cufftComplex) * (wavHeader.Subchunk2Size/2/SIGNAL_SIZE + 1));
 
     // cudaMemcpy(h_fft, g_fft_max_out, sizeof(cufftComplex) * (wavHeader.Subchunk2Size/2/SIGNAL_SIZE + 1), 
