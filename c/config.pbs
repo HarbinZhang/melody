@@ -13,4 +13,4 @@ echo "I ran on:"
 cat $PBS_NODEFILE
 # Let PBS handle your output
 cd ./melody/c
-./main.out part_output.wav
+./main.out part100_output.wav
