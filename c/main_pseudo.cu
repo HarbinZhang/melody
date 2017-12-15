@@ -10,7 +10,7 @@
 // typedef float2 cufftComplex;
 
 #define SIGNAL_SIZE 4096
-#define RR 1
+#define RR 968
 
 typedef struct  WAV_HEADER
 {
@@ -138,7 +138,7 @@ int main(int argc, char ** argv) {
         cudaMemcpy(g_signal, h_signal, mem_size,
            cudaMemcpyHostToDevice);
 
-        cufftResult err = cufftExecC2C(plan, (cufftComplex *) (g_signal + i), (cufftComplex *) (g_fft_out + i), CUFFT_FORWARD);    
+        cufftResult err = cufftExecC2C(plan, (cufftComplex *) (g_signal + i*SIGNAL_SIZE), (cufftComplex *) (g_fft_out + i*SIGNAL_SIZE), CUFFT_FORWARD);    
         // find max fft in fft results.
         blockSize = wavHeader.Subchunk2Size/SIGNAL_SIZE/2048 + 1;
         all_in<<<blockSize, wavHeader.Subchunk2Size/2/SIGNAL_SIZE-1>>>(g_fft_out, g_fft_max_out, wavHeader.SamplesPerSec);
