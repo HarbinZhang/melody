@@ -148,7 +148,10 @@ int main(int argc, char ** argv) {
 
     err = cufftExecC2C(plan, (cufftComplex *)g_fft_out, (cufftComplex *)g_signal, CUFFT_INVERSE);    
 
+    cudaMemcpy(g_signal, h_signal, mem_size,
+               cudaMemcpyHostToDevice);
 
+    printf("back_siginal %f\n", h_signal[1].x);
 
     auto end = std::chrono::system_clock::now();
     std::chrono::duration<double> elapsed_seconds = end-start;
