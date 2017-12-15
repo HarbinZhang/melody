@@ -14,7 +14,7 @@ infile = "newone.wav"
 infile = wave.open(infile, 'r')
 sampwidth = infile.getsampwidth()
 
-ofile = wave.open("part90_output.wav", "w")
+ofile = wave.open("part30_output.wav", "w")
 ofile.setparams(infile.getparams())
 
 
@@ -25,7 +25,7 @@ dc = dcs[sampwidth]
 
 print infile.getnframes()
 
-for i in range(44100*90):
+for i in range(44100*30):
     iframe = infile.readframes(1)
 
     iframe = struct.unpack(fmt, iframe)[0]
